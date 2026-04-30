@@ -1,11 +1,11 @@
 # 📦 Semillero - Next.js + Prisma + MySQL + Docker
 
-## 📌 Descripción
+## Descripción
 Proyecto web desarrollado con **Next.js**, **Prisma ORM** y **MySQL en Docker**, que permite la gestión de usuarios y conexión a base de datos mediante API.
 
 ---
 
-## ⚙️ Tecnologías usadas
+## Tecnologías usadas
 
 - Next.js
 - Prisma ORM
@@ -15,7 +15,7 @@ Proyecto web desarrollado con **Next.js**, **Prisma ORM** y **MySQL en Docker**,
 
 ---
 
-## 🚀 Requisitos
+## Requisitos
 
 - Node.js >= 18
 - Docker
@@ -24,7 +24,7 @@ Proyecto web desarrollado con **Next.js**, **Prisma ORM** y **MySQL en Docker**,
 
 ---
 
-## 📥 Instalación del proyecto
+## Instalación del proyecto
 
 ```bash
 git clone <URL_REPOSITORIO>
