@@ -1,4 +1,5 @@
-# 📦 Semillero - Next.js + Prisma + MySQL + Docker
+# JOSÉ LUIS VALVERDE GALLEGO
+# Semillero - Next.js + Prisma + MySQL + Docker
 
 ## Descripción
 Proyecto web desarrollado con **Next.js**, **Prisma ORM** y **MySQL en Docker**, que permite la gestión de usuarios y conexión a base de datos mediante API.
