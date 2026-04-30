@@ -1,35 +1,56 @@
 # JOSÉ LUIS VALVERDE GALLEGO
-# Semillero - Next.js + Prisma + MySQL + Docker
+# Semillero - Next.js + Prisma + MySQL
 
-## Descripción
-Proyecto web desarrollado con **Next.js**, **Prisma ORM** y **MySQL en Docker**, que permite la gestión de usuarios y conexión a base de datos mediante API.
-
----
-
-## Tecnologías usadas
-
-- Next.js
-- Prisma ORM
-- MySQL 8 (Docker)
-- Docker / Docker Compose
-- Node.js
-
----
+Proyecto web con **Next.js**, **Prisma ORM** y **MySQL en Docker**.
 
 ## Requisitos
 
 - Node.js >= 18
-- Docker
-- Docker Compose
-- npm
+- Docker & Docker Compose
 
----
-
-## Instalación del proyecto
+## Arranque rápido
 
 ```bash
-git clone <URL_REPOSITORIO>
-cd semillero
+# 1. Instalar dependencias
 npm install
 
-Copiar .env.example a .env y rellenar variables locales
+# 2. Configurar .env
+cp .env.example .env
+# Editar .env con las variables (ver tabla abajo)
+
+# 3. Levantar base de datos
+docker-compose up -d
+
+# 4. Sincronizar BD
+npx prisma db push
+
+# 5. Arrancar aplicación
+npm run dev
+```
+
+## Puertos
+
+| Servicio | Puerto |
+|----------|--------|
+| Next.js | 3000 |
+| MySQL | 3306 |
+
+## Variables (.env)
+
+```env
+MYSQL_ROOT_PASSWORD=root_pass
+MYSQL_DATABASE=semillero_db
+MYSQL_USER=semillero_user
+MYSQL_PASSWORD=user_pass
+DATABASE_URL=mysql://semillero_user:user_pass@localhost:3306/semillero_db
+```
+
+## Comandos
+
+```bash
+npm run dev          # Desarrollo
+npm run build        # Build
+npm start            # Producción
+npx prisma studio   # Ver BD
+docker-compose down # Detener BD
+```
