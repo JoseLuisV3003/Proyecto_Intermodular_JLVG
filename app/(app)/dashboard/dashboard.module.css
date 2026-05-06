@@ -1,0 +1,1073 @@
+/* Dashboard styles */
+.container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 2rem 2.5rem;
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+@media (max-width: 1100px) {
+  .container {
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.subTitle {
+  margin: 0.5rem 0 0;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.headerButtons {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.logoutButton {
+  padding: 0.5rem 1rem;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.logoutButton:hover {
+  background-color: #dc2626;
+}
+
+/* Semilleros section */
+.semillerosSection {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1.5rem;
+}
+
+/* Create semillero form */
+.createForm {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.createInput {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.createInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.searchContainer {
+  margin: 1.5rem 0;
+  width: 100%;
+  max-width: 900px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.createButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.createButton:hover {
+  background-color: #059669;
+}
+
+.createButton:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Semilleros list */
+.semillerosList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.semilleroItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.semilleroItem:hover {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.semilleroInfo {
+  flex: 1;
+}
+
+.semilleroName {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.semilleroMeta {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Edit form */
+.editForm {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.editInput {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.editInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.editButton {
+  padding: 0.5rem 1rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.editButton:hover {
+  background-color: #2563eb;
+}
+
+.cancelButton {
+  padding: 0.5rem 1rem;
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cancelButton:hover {
+  background-color: #4b5563;
+}
+
+.editButtonAction {
+  padding: 0.5rem 1rem;
+  background-color: #f59e0b;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.editButtonAction:hover {
+  background-color: #d97706;
+}
+
+/* Empty state */
+.emptyState {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+}
+
+.emptyState h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.emptyState p {
+  font-size: 1rem;
+}
+
+/* Loading state */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  font-size: 1.125rem;
+  color: #6b7280;
+}
+
+/* Error state */
+.error {
+  text-align: center;
+  padding: 3rem;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  color: #dc2626;
+}
+
+.error h2 {
+  margin-bottom: 1rem;
+  color: #dc2626;
+}
+
+/* Criaturas grid */
+.criaturasGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.criaturaCard {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  width: 100%;
+  min-width: auto;
+  max-width: none;
+}
+
+@media (max-width: 1400px) {
+  .criaturasGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1100px) {
+  .criaturasGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 780px) {
+  .criaturasGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .criaturasGrid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .criaturaCard {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
+
+.criaturaCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
+  border-color: #3b82f6;
+}
+
+.criaturaHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.criaturaName {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  flex: 1;
+}
+
+.cantidadBadge {
+  background-color: #10b981;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-left: 0.75rem;
+}
+
+.criaturaClasificacion {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+  font-style: italic;
+}
+
+.criaturaPreview {
+  margin-top: 0.75rem;
+}
+
+.criaturaDesc {
+  color: #4b5563;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Actions section */
+.actionsSection {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Modal styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 0.75rem;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: color 0.2s;
+}
+
+.closeButton:hover {
+  color: #374151;
+  background-color: #f3f4f6;
+}
+
+.modalBody {
+  padding: 1.5rem;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.criaturaDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detailRow {
+  border-bottom: 1px solid #f3f4f6;
+  padding-bottom: 0.75rem;
+}
+
+.detailRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.detailRow strong {
+  display: block;
+  color: #374151;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.detailRow p {
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.habilidadesList,
+.depredadoresList {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+}
+
+.habilidadesList li,
+.depredadoresList li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.habilidadesList li:last-child,
+.depredadoresList li:last-child {
+  border-bottom: none;
+}
+
+.habilidadesList li strong {
+  color: #1f2937;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.habilidadesList li p {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+/* Add criaturas page styles */
+.addCriaturasInfo {
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+.addCriaturasInfo p {
+  margin: 0 0 0.5rem 0;
+  color: #1e40af;
+}
+
+.seleccionSummary {
+  color: #059669;
+  font-weight: 600;
+}
+
+.criaturasList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.criaturaAddCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  transition: border-color 0.2s;
+}
+
+.criaturaAddCard:hover {
+  border-color: #3b82f6;
+}
+
+/* Admin section */
+.adminSection {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 0.5rem;
+}
+
+.adminSection h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #92400e;
+}
+
+.adminButtons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.adminButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #f59e0b;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.adminButton:hover {
+  background-color: #d97706;
+}
+
+/* Form styles for create criatura */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.editCriaturaForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.input {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.textarea {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.helperText {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.formSection {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.sectionSubtitle {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.dynamicGroup {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 1rem;
+}
+
+.secondaryButton,
+.removeButton {
+  padding: 0.65rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: white;
+  color: #374151;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.secondaryButton:hover,
+.removeButton:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.removeButton {
+  justify-self: end;
+}
+
+.criaturaCardImage {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+  background-color: transparent;
+}
+
+.detailImage {
+  width: 100%;
+  max-height: 250px;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  margin-top: 0.5rem;
+  background-color: #f3f4f6;
+}
+
+@media (max-width: 768px) {
+  .criaturaCardImage,
+  .detailImage {
+    max-height: 180px;
+  }
+}
+
+/* Criaturas management styles */
+.criaturasList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.criaturaAddCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  transition: border-color 0.2s;
+}
+
+.criaturaAddCard:hover {
+  border-color: #3b82f6;
+}
+
+.criaturaInfo {
+  flex: 1;
+}
+
+.cantidadControls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.cantidadLabel {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+.cantidadInputGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cantidadButton {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 0.375rem;
+  cursor: pointer;
+}
+
+.cantidadInput {
+  width: 3.5rem;
+  text-align: center;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+}
+
+.criaturaHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.criaturaName {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  flex: 1;
+}
+
+.criaturaMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.clasificacionBadge {
+  background-color: #dbeafe;
+  color: #1e40af;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.criaturaDetails {
+  margin-bottom: 1rem;
+}
+
+.criaturaDesc {
+  color: #4b5563;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0 0 0.75rem 0;
+}
+
+.criaturaStats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.criaturaActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.editButtonAction {
+  padding: 0.5rem 1rem;
+  background-color: #f59e0b;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.editButtonAction:hover {
+  background-color: #d97706;
+}
+
+.deleteButton {
+  padding: 0.5rem 1rem;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.deleteButton:hover {
+  background-color: #dc2626;
+}
+
+.deleteButton:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.editActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.criaturaInfo {
+  flex: 1;
+  margin-right: 2rem;
+}
+
+.cantidadControls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 150px;
+}
+
+.cantidadLabel {
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.cantidadInputGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cantidadButton {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid #d1d5db;
+  background: white;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #374151;
+  transition: all 0.2s;
+}
+
+.cantidadButton:hover:not(:disabled) {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.cantidadButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cantidadInput {
+  width: 4rem;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  text-align: center;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.cantidadInput:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.semilleroActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.viewButton {
+  padding: 0.5rem 1rem;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.viewButton:hover {
+  background-color: #059669;
+}
+
+/* Delete button styles */
+.deleteButtonAction {
+  padding: 0.5rem 1rem;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.deleteButtonAction:hover {
+  background-color: #dc2626;
+}
+
+.deleteButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.deleteButton:hover:not(:disabled) {
+  background-color: #dc2626;
+}
+
+.deleteButton:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Delete modal styles */
+.deleteInfo {
+  padding: 1rem;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.deleteInfo p {
+  color: #dc2626;
+  margin: 0.5rem 0;
+}
+
+.deleteInfo p:first-child {
+  margin-top: 0;
+}
+
+.deleteInfo p:last-child {
+  margin-bottom: 1rem;
+}
+
+.cantidadDeleteControls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.deleteWarning {
+  background-color: #fef3c7;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+}
