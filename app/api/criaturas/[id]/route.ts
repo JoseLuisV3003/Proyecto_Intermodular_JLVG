@@ -38,6 +38,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const {
       nombre,
       clasificacion,
+      tipo,
       danio_base,
       germinacion,
       descripcion,
@@ -117,6 +118,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         data: {
           nombre: nombre.trim(),
           clasificacion: clasificacion?.trim() || null,
+          tipo: tipo || undefined,
           danio_base: typeof danio_base === 'number' ? danio_base : null,
           germinacion: germinacion?.trim() || null,
           descripcion: descripcion?.trim() || null,

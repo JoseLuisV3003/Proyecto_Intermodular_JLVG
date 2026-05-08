@@ -4,7 +4,7 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background-color: #f3f4f6;
+  background-color: transparent;
 }
 
 .card {
@@ -14,6 +14,30 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 28rem;
+  position: relative;
+  margin-top: 8rem; /* Mayor margen para que quepa el logo grande */
+}
+
+.logoContainer {
+  position: absolute;
+  top: -7.5rem; /* Subirlo más porque ahora es más grande */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28rem; /* Mucho más grande, ancho igual a la tarjeta */
+  max-width: 90vw; /* Evita que se salga en móviles */
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.logoImage {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  /* Borde blanco para que las letras negras resalten */
+  filter: drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white) drop-shadow(1px -1px 0 white) drop-shadow(-1px 1px 0 white) drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
 }
 
 .title {
@@ -23,6 +47,7 @@
   margin-bottom: 1.5rem;
   color: black;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
+  display: none;
 }
 
 .form {

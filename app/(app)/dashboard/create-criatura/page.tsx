@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from '../dashboard.module.css';
 
@@ -9,6 +9,7 @@ export default function CreateCriaturaPage() {
   const [formData, setFormData] = useState({
     nombre: '',
     clasificacion: '',
+    tipo: '',
     danio_base: '',
     germinacion: '',
     descripcion: '',
@@ -21,7 +22,7 @@ export default function CreateCriaturaPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -137,6 +138,26 @@ export default function CreateCriaturaPage() {
               value={formData.clasificacion}
               onChange={handleChange}
             />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="tipo" className={styles.label}>Tipo</label>
+            <select
+              id="tipo"
+              name="tipo"
+              className={styles.input}
+              value={formData.tipo}
+              onChange={handleChange}
+            >
+              <option value="">Selecciona un tipo</option>
+              <option value="Normal">Normal</option>
+              <option value="Subtipo">Subtipo</option>
+              <option value="Legendarios">Legendarios</option>
+              <option value="Venerables">Venerables</option>
+              <option value="Desterrados">Desterrados</option>
+              <option value="Prohibidos">Prohibidos</option>
+              <option value="Extintos">Extintos</option>
+            </select>
           </div>
 
           <div className={styles.formGroup}>

@@ -62,7 +62,13 @@ export default function RegisterPage() {
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <h1 className={styles.title}>Crear cuenta</h1>
+        <div className={styles.logoContainer}>
+          <img 
+            src="https://res.cloudinary.com/dxdij0mxf/image/upload/v1778231980/image-removebg-preview_lomu1g.png" 
+            alt="Logo Mi Semillero Na'az" 
+            className={styles.logoImage} 
+          />
+        </div>
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label htmlFor="username" className={styles.label}>

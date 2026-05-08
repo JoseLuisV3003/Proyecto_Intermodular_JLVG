@@ -30,10 +30,21 @@ model Semillero {
   @@map("semilleros")
 }
 
+enum CriaturaTipo {
+  Normal
+  Subtipo
+  Legendarios
+  Venerables
+  Desterrados
+  Prohibidos
+  Extintos
+}
+
 model Criatura {
   id            Int      @id @default(autoincrement())
   nombre        String   @db.VarChar(100)
   clasificacion String?  @db.VarChar(100)
+  tipo          CriaturaTipo? @default(Normal)
   danio_base    Int?
   germinacion   String?  @db.Text
   descripcion   String?  @db.Text

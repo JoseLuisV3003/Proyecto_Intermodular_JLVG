@@ -8,6 +8,7 @@ interface Criatura {
   id: number;
   nombre: string;
   clasificacion?: string;
+  tipo?: string;
   danio_base?: number;
   germinacion?: string;
   descripcion?: string;
@@ -40,13 +41,21 @@ export default function SemilleroDetailPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [cantidadAEliminar, setCantidadAEliminar] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [tipoFilter, setTipoFilter] = useState('');
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
+  const [columnsPerRow, setColumnsPerRow] = useState(5);
 
   const criaturasAMostrar = semillero
-    ? semillero.criaturas.filter((criatura) =>
-        criatura.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+    ? semillero.criaturas.filter((criatura) => {
+        const query = searchTerm.toLowerCase().trim();
+        const matchesSearch =
+          query === '' ||
+          criatura.nombre.toLowerCase().includes(query) ||
+          criatura.clasificacion?.toLowerCase().includes(query);
+        const matchesTipo = tipoFilter === '' || criatura.tipo === tipoFilter;
+        return matchesSearch && matchesTipo;
+      })
     : [];
   const [error, setError] = useState<string | null>(null);
 
@@ -168,7 +177,7 @@ export default function SemilleroDetailPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1>{semillero.nombre}</h1>
+        <h1 className={styles.headerTitle}>{semillero.nombre}</h1>
         <button className={styles.logoutButton} onClick={handleBackToDashboard}>
           ← Volver
         </button>
@@ -182,8 +191,36 @@ export default function SemilleroDetailPage() {
             className={styles.searchInput}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar criaturas por nombre..."
+            placeholder="Buscar criaturas por nombre o clasificación..."
           />
+          <select
+            className={`${styles.searchInput} ${styles.searchSelect}`}
+            value={tipoFilter}
+            onChange={(e) => setTipoFilter(e.target.value)}
+          >
+            <option value="">Todos los tipos</option>
+            <option value="Normal">Normal</option>
+            <option value="Subtipo">Subtipo</option>
+            <option value="Legendarios">Legendarios</option>
+            <option value="Venerables">Venerables</option>
+            <option value="Desterrados">Desterrados</option>
+            <option value="Prohibidos">Prohibidos</option>
+            <option value="Extintos">Extintos</option>
+          </select>
+          <select
+            className={`${styles.searchInput} ${styles.searchSelect}`}
+            value={columnsPerRow}
+            onChange={(e) => setColumnsPerRow(Number(e.target.value))}
+            title="Criaturas por fila"
+          >
+            <option value={5}>5 por fila</option>
+            <option value={8}>8 por fila</option>
+          </select>
+          {semillero.criaturas.length > 0 && (
+            <button className={styles.createButton} onClick={handleAddCriaturas} style={{ margin: 0, padding: '0.5rem 1rem' }}>
+              Añadir Más Criaturas
+            </button>
+          )}
         </div>
 
         {criaturasAMostrar.length === 0 ? (
@@ -202,7 +239,10 @@ export default function SemilleroDetailPage() {
             </div>
           )
         ) : (
-          <div className={styles.criaturasGrid}>
+          <div 
+            className={`${styles.criaturasGrid} ${columnsPerRow === 8 ? styles.grid8 : ''}`}
+            style={{ gridTemplateColumns: `repeat(${columnsPerRow}, minmax(0, 1fr))` }}
+          >
             {criaturasAMostrar.map((criatura) => (
               <div
                 key={criatura.id}
@@ -220,28 +260,11 @@ export default function SemilleroDetailPage() {
                     className={styles.criaturaCardImage}
                   />
                 )}
-                {criatura.clasificacion && (
+                {columnsPerRow !== 8 && criatura.clasificacion && (
                   <p className={styles.criaturaClasificacion}>{criatura.clasificacion}</p>
                 )}
-                <div className={styles.criaturaPreview}>
-                  {criatura.descripcion && (
-                    <p className={styles.criaturaDesc}>
-                      {criatura.descripcion.length > 100
-                        ? `${criatura.descripcion.substring(0, 100)}...`
-                        : criatura.descripcion}
-                    </p>
-                  )}
-                </div>
               </div>
             ))}
-          </div>
-        )}
-
-        {semillero.criaturas.length > 0 && (
-          <div className={styles.actionsSection}>
-            <button className={styles.createButton} onClick={handleAddCriaturas}>
-              Añadir Más Criaturas
-            </button>
           </div>
         )}
       </div>
@@ -257,91 +280,101 @@ export default function SemilleroDetailPage() {
 
             <div className={styles.modalBody}>
               <div className={styles.criaturaDetails}>
-                {selectedCriatura.clasificacion && (
-                  <div className={styles.detailRow}>
-                    <strong>Clasificación:</strong> {selectedCriatura.clasificacion}
-                  </div>
-                )}
+                {/* Columna de Texto */}
+                <div className={styles.criaturaInfoText}>
+                  {selectedCriatura.clasificacion && (
+                    <div className={styles.detailRow}>
+                      <strong>Clasificación:</strong> {selectedCriatura.clasificacion}
+                    </div>
+                  )}
 
-                {selectedCriatura.danio_base && (
-                  <div className={styles.detailRow}>
-                    <strong>Daño Base:</strong> {selectedCriatura.danio_base}
-                  </div>
-                )}
+                  {selectedCriatura.danio_base && (
+                    <div className={styles.detailRow}>
+                      <strong>Daño Base:</strong> {selectedCriatura.danio_base}
+                    </div>
+                  )}
 
-                {selectedCriatura.descripcion && (
-                  <div className={styles.detailRow}>
-                    <strong>Descripción:</strong>
-                    <p>{selectedCriatura.descripcion}</p>
-                  </div>
-                )}
+                  {selectedCriatura.descripcion && (
+                    <div className={styles.detailRow}>
+                      <strong>Descripción:</strong>
+                      <p>{selectedCriatura.descripcion}</p>
+                    </div>
+                  )}
 
-                {selectedCriatura.apariencia && selectedCriatura.apariencia.startsWith('http') ? (
-                  <div className={styles.detailRow}>
-                    <strong>Apariencia:</strong>
-                    <img
-                      src={selectedCriatura.apariencia}
-                      alt={selectedCriatura.nombre}
-                      className={styles.detailImage}
-                    />
-                  </div>
-                ) : selectedCriatura.apariencia ? (
-                  <div className={styles.detailRow}>
-                    <strong>Apariencia:</strong>
-                    <p>{selectedCriatura.apariencia}</p>
-                  </div>
-                ) : null}
+                  {selectedCriatura.forma_ser && (
+                    <div className={styles.detailRow}>
+                      <strong>Forma de Ser:</strong>
+                      <p>{selectedCriatura.forma_ser}</p>
+                    </div>
+                  )}
 
-                {selectedCriatura.forma_ser && (
-                  <div className={styles.detailRow}>
-                    <strong>Forma de Ser:</strong>
-                    <p>{selectedCriatura.forma_ser}</p>
-                  </div>
-                )}
+                  {selectedCriatura.germinacion && (
+                    <div className={styles.detailRow}>
+                      <strong>Germinación:</strong>
+                      <p>{selectedCriatura.germinacion}</p>
+                    </div>
+                  )}
 
-                {selectedCriatura.germinacion && (
-                  <div className={styles.detailRow}>
-                    <strong>Germinación:</strong>
-                    <p>{selectedCriatura.germinacion}</p>
-                  </div>
-                )}
+                  {selectedCriatura.observaciones && (
+                    <div className={styles.detailRow}>
+                      <strong>Observaciones:</strong>
+                      <p>{selectedCriatura.observaciones}</p>
+                    </div>
+                  )}
 
-                {selectedCriatura.observaciones && (
-                  <div className={styles.detailRow}>
-                    <strong>Observaciones:</strong>
-                    <p>{selectedCriatura.observaciones}</p>
-                  </div>
-                )}
+                  {selectedCriatura.habilidades.length > 0 && (
+                    <div className={styles.detailRow}>
+                      <strong>Habilidades:</strong>
+                      <ul className={styles.habilidadesList}>
+                        {selectedCriatura.habilidades.map((habilidad) => (
+                          <li key={habilidad.id}>
+                            <strong>{habilidad.nombre}</strong>
+                            {habilidad.descripcion && <p>{habilidad.descripcion}</p>}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
-                {selectedCriatura.habilidades.length > 0 && (
-                  <div className={styles.detailRow}>
-                    <strong>Habilidades:</strong>
-                    <ul className={styles.habilidadesList}>
-                      {selectedCriatura.habilidades.map((habilidad) => (
-                        <li key={habilidad.id}>
-                          <strong>{habilidad.nombre}</strong>
-                          {habilidad.descripcion && <p>{habilidad.descripcion}</p>}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                  {selectedCriatura.depredadores.length > 0 && (
+                    <div className={styles.detailRow}>
+                      <strong>Depredadores:</strong>
+                      <ul className={styles.depredadoresList}>
+                        {selectedCriatura.depredadores.map((depredador) => (
+                          <li key={depredador.id}>
+                            {depredador.descripcion || 'Sin descripción'}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
-                {selectedCriatura.depredadores.length > 0 && (
                   <div className={styles.detailRow}>
-                    <strong>Depredadores:</strong>
-                    <ul className={styles.depredadoresList}>
-                      {selectedCriatura.depredadores.map((depredador) => (
-                        <li key={depredador.id}>
-                          {depredador.descripcion || 'Sin descripción'}
-                        </li>
-                      ))}
-                    </ul>
+                    <strong>Cantidad en semillero:</strong> {selectedCriatura.cantidad}
                   </div>
-                )}
+                </div>
 
-                <div className={styles.detailRow}>
-                  <strong>Cantidad en semillero:</strong> {selectedCriatura.cantidad}
+                {/* Columna de Imagen */}
+                <div className={styles.criaturaInfoImage}>
+                  {selectedCriatura.apariencia && selectedCriatura.apariencia.startsWith('http') ? (
+                    <>
+                      <img
+                        src={selectedCriatura.apariencia}
+                        alt={selectedCriatura.nombre}
+                        className={styles.detailImage}
+                        style={{ maxHeight: '400px', width: '100%', objectFit: 'contain' }}
+                      />
+                    </>
+                  ) : selectedCriatura.apariencia ? (
+                    <div className={styles.detailRow}>
+                      <strong>Apariencia:</strong>
+                      <p>{selectedCriatura.apariencia}</p>
+                    </div>
+                  ) : (
+                    <div style={{ padding: '2rem', color: '#6b7280', textAlign: 'center' }}>
+                      Sin imagen disponible
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -352,9 +385,6 @@ export default function SemilleroDetailPage() {
               </button>
               <button className={styles.deleteButtonAction} onClick={handleOpenDeleteModal}>
                 Eliminar del Semillero
-              </button>
-              <button className={styles.createButton} onClick={handleAddCriaturas}>
-                Añadir Criaturas
               </button>
             </div>
           </div>

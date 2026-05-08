@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
       apariencia: criatura.apariencia,
       observaciones: criatura.observaciones,
       forma_ser: criatura.forma_ser,
+      tipo: criatura.tipo,
       habilidades: criatura.habilidades.map(ch => ({
         id: ch.habilidad.id,
         nombre: ch.habilidad.nombre,
@@ -87,6 +88,7 @@ export async function POST(request: NextRequest) {
     const {
       nombre,
       clasificacion,
+      tipo,
       danio_base,
       germinacion,
       descripcion,
@@ -158,6 +160,7 @@ export async function POST(request: NextRequest) {
     const data: any = {
       nombre: nombre.trim(),
       clasificacion: clasificacion?.trim() || null,
+      tipo: tipo || undefined,
       danio_base: typeof danio_base === 'number' ? danio_base : null,
       germinacion: germinacion?.trim() || null,
       descripcion: descripcion?.trim() || null,

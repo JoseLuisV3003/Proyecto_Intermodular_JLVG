@@ -77,6 +77,7 @@ export async function GET(
           nombre: ch.habilidad.nombre,
           descripcion: ch.habilidad.descripcion
         })),
+        tipo: sc.criatura.tipo,
         depredadores: sc.criatura.depredadores
       }))
     };

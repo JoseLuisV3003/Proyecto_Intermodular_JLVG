@@ -5,7 +5,7 @@
   margin: 0 auto;
   padding: 2rem 2.5rem;
   min-height: 100vh;
-  background-color: #f9fafb;
+  background-color: transparent;
 }
 
 @media (max-width: 1100px) {
@@ -23,11 +23,25 @@
   border-bottom: 2px solid #e5e7eb;
 }
 
-.header h1 {
+.headerLogo {
+  height: 60px;
+  /* Tamaño adecuado para que no rompa el header */
+  width: auto;
+  object-fit: contain;
   margin: 0;
-  font-size: 2rem;
-  font-weight: 600;
+  /* Borde blanco para que las letras negras resalten sobre el fondo oscuro */
+  filter: drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white) drop-shadow(1px -1px 0 white) drop-shadow(-1px 1px 0 white) drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+}
+
+.headerTitle {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 800;
   color: #1f2937;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  letter-spacing: 0.05em;
+  -webkit-text-stroke: 1.5px white;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.9), 2px 2px 0 white, -2px -2px 0 white, 2px -2px 0 white, -2px 2px 0 white;
 }
 
 .subTitle {
@@ -101,18 +115,37 @@
 }
 
 .searchContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   margin: 1.5rem 0;
   width: 100%;
   max-width: 900px;
 }
 
 .searchInput {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   padding: 0.75rem 1rem;
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
   font-size: 1rem;
   transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.searchSelect {
+  width: 170px;
+  min-width: 140px;
+}
+
+@media (max-width: 640px) {
+  .searchContainer {
+    flex-direction: column;
+  }
+
+  .searchSelect {
+    width: 100%;
+  }
 }
 
 .searchInput:focus {
@@ -299,21 +332,64 @@
 .criaturasGrid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 1.5rem;
+  gap: clamp(0.5rem, 1.5vw, 1.5rem);
+  /* Menos gap en pantallas saturadas */
   margin-bottom: 2rem;
 }
 
 .criaturaCard {
+  display: flex;
+  flex-direction: column;
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
-  padding: 1.5rem;
+  padding: clamp(0.5rem, 0.8vw, 1rem);
+  /* Padding mucho menor para ceder espacio a la imagen */
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   width: 100%;
   min-width: auto;
   max-width: none;
+  position: relative;
+  /* Para poder posicionar el badge de cantidad de forma absoluta */
+  aspect-ratio: 1 / 1;
+  /* Tarjetas cuadradas */
+  justify-content: space-between;
+  /* Distribuye el espacio verticalmente */
+  /* align-items: center removido para que los elementos se estiren (stretch por defecto) y no se achique la imagen */
+  /* overflow: hidden eliminado para permitir que el badge sobresalga */
+}
+
+.adminCard {
+  aspect-ratio: auto;
+  height: 100%;
+  justify-content: flex-start;
+  gap: 0.75rem;
+}
+
+.adminCard .criaturaCardImage {
+  flex: 1 1 120px;
+  min-height: 100px;
+  max-height: 160px;
+  margin-bottom: 0;
+}
+
+.adminDetailsStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.adminDetailText {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+  text-align: center;
 }
 
 @media (max-width: 1400px) {
@@ -354,28 +430,44 @@
 }
 
 .criaturaHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 0.75rem;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  display: block;
+  margin-bottom: clamp(0.25rem, 1vw, 0.75rem);
 }
 
 .criaturaName {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: clamp(0.85rem, 1.5vw, 1.25rem);
   font-weight: 600;
   color: #1f2937;
-  flex: 1;
+  /* Eliminamos el nowrap para que el texto pueda saltar de línea y verse entero */
+  white-space: normal;
+  overflow: visible;
 }
 
 .cantidadBadge {
+  position: absolute;
+  top: -0.9rem;
+  right: -0.9rem;
   background-color: #10b981;
   color: white;
-  padding: 0.25rem 0.75rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 9999px;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  margin-left: 0.75rem;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.criaturaMeta {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  z-index: 10;
 }
 
 .criaturaClasificacion {
@@ -383,6 +475,7 @@
   font-size: 0.875rem;
   margin-bottom: 0.75rem;
   font-style: italic;
+  text-align: center;
 }
 
 .criaturaPreview {
@@ -421,7 +514,8 @@
 .modalContent {
   background: white;
   border-radius: 0.75rem;
-  max-width: 600px;
+  max-width: 900px;
+  /* Ampliado para ocupar más pantalla */
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
@@ -432,13 +526,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem;
+  padding: 1.5rem 2rem;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .modalHeader h2 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 600;
   color: #1f2937;
 }
@@ -460,15 +554,40 @@
 }
 
 .modalBody {
-  padding: 1.5rem;
-  max-height: 60vh;
+  padding: 2rem;
+  max-height: 70vh;
   overflow-y: auto;
 }
 
 .criaturaDetails {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  /* Dos columnas: texto y foto */
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .criaturaDetails {
+    grid-template-columns: 1fr;
+    /* Una columna en móvil */
+  }
+}
+
+.criaturaInfoText {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.criaturaInfoImage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f9fafb;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e5e7eb;
 }
 
 .detailRow {
@@ -723,11 +842,22 @@
 
 .criaturaCardImage {
   width: 100%;
-  max-height: 200px;
+  height: 100%;
+  max-height: 100%;
+  flex: 1;
+  min-height: 0;
   object-fit: contain;
   border-radius: 0.75rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
+  /* Quitamos este margen que achicaba la imagen en 10 columnas */
   background-color: transparent;
+}
+
+.grid8 .criaturaCardImage {
+  transform: scale(1.15);
+  /* Escala ligeramente menor para que respire */
+  margin-bottom: 0.5rem;
+  /* Margen inferior para separarla del borde */
 }
 
 .detailImage {
@@ -740,6 +870,7 @@
 }
 
 @media (max-width: 768px) {
+
   .criaturaCardImage,
   .detailImage {
     max-height: 180px;
@@ -841,6 +972,7 @@
 
 .criaturaDetails {
   margin-bottom: 1rem;
+  flex: 1;
 }
 
 .criaturaDesc {
@@ -859,8 +991,18 @@
 
 .criaturaActions {
   display: flex;
-  gap: 0.75rem;
-  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: stretch;
+  margin-top: auto;
+}
+
+.criaturaActions>button {
+  flex: 1 1 calc(50% - 0.5rem);
+  text-align: center;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .editButtonAction {

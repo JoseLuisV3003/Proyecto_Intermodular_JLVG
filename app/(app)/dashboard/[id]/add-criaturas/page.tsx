@@ -8,6 +8,7 @@ interface Criatura {
   id: number;
   nombre: string;
   clasificacion?: string;
+  tipo?: string;
   descripcion?: string;
 }
 
@@ -23,6 +24,7 @@ export default function AddCriaturasPage() {
   const [criaturas, setCriaturas] = useState<Criatura[]>([]);
   const [seleccionadas, setSeleccionadas] = useState<CriaturaSeleccionada[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [tipoFilter, setTipoFilter] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -153,8 +155,22 @@ export default function AddCriaturasPage() {
             className={styles.searchInput}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar criaturas por nombre..."
+            placeholder="Buscar criaturas por nombre o clasificación..."
           />
+          <select
+            className={`${styles.searchInput} ${styles.searchSelect}`}
+            value={tipoFilter}
+            onChange={(e) => setTipoFilter(e.target.value)}
+          >
+            <option value="">Todos los tipos</option>
+            <option value="Normal">Normal</option>
+            <option value="Subtipo">Subtipo</option>
+            <option value="Legendarios">Legendarios</option>
+            <option value="Venerables">Venerables</option>
+            <option value="Desterrados">Desterrados</option>
+            <option value="Prohibidos">Prohibidos</option>
+            <option value="Extintos">Extintos</option>
+          </select>
         </div>
 
         {error && (
@@ -163,7 +179,15 @@ export default function AddCriaturasPage() {
           </div>
         )}
 
-        {criaturas.filter((criatura) => criatura.nombre.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 ? (
+        {criaturas.filter((criatura) => {
+            const query = searchTerm.toLowerCase().trim();
+            const matchesSearch =
+              query === '' ||
+              criatura.nombre.toLowerCase().includes(query) ||
+              criatura.clasificacion?.toLowerCase().includes(query);
+            const matchesTipo = tipoFilter === '' || criatura.tipo === tipoFilter;
+            return matchesSearch && matchesTipo;
+          }).length === 0 ? (
           <div className={styles.emptyState}>
             <h3>No se encontraron criaturas</h3>
             <p>Prueba con otro nombre o borra el filtro.</p>
@@ -171,7 +195,15 @@ export default function AddCriaturasPage() {
         ) : (
           <div className={styles.criaturasList}>
             {criaturas
-              .filter((criatura) => criatura.nombre.toLowerCase().includes(searchTerm.toLowerCase()))
+              .filter((criatura) => {
+                const query = searchTerm.toLowerCase().trim();
+                const matchesSearch =
+                  query === '' ||
+                  criatura.nombre.toLowerCase().includes(query) ||
+                  criatura.clasificacion?.toLowerCase().includes(query);
+                const matchesTipo = tipoFilter === '' || criatura.tipo === tipoFilter;
+                return matchesSearch && matchesTipo;
+              })
               .map((criatura) => (
                 <div key={criatura.id} className={styles.criaturaAddCard}>
               <div className={styles.criaturaInfo}>

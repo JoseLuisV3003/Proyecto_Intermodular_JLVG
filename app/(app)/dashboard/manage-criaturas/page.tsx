@@ -19,6 +19,7 @@ interface Criatura {
   id: number;
   nombre: string;
   clasificacion?: string;
+  tipo?: string;
   danio_base?: number;
   germinacion?: string;
   descripcion?: string;
@@ -38,10 +39,18 @@ export default function ManageCriaturasPage() {
   const [editForm, setEditForm] = useState<Partial<Criatura>>({});
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [tipoFilter, setTipoFilter] = useState('');
+  const [columnsPerRow, setColumnsPerRow] = useState(5);
 
-  const filteredCriaturas = criaturas.filter((criatura) =>
-    criatura.nombre.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredCriaturas = criaturas.filter((criatura) => {
+    const query = searchTerm.toLowerCase().trim();
+    const matchesSearch =
+      query === '' ||
+      criatura.nombre.toLowerCase().includes(query) ||
+      criatura.clasificacion?.toLowerCase().includes(query);
+    const matchesTipo = tipoFilter === '' || criatura.tipo === tipoFilter;
+    return matchesSearch && matchesTipo;
+  });
 
   useEffect(() => {
     cargarCriaturas();
@@ -263,8 +272,31 @@ export default function ManageCriaturasPage() {
             className={styles.searchInput}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar criaturas por nombre..."
+            placeholder="Buscar criaturas por nombre o clasificación..."
           />
+          <select
+            className={`${styles.searchInput} ${styles.searchSelect}`}
+            value={tipoFilter}
+            onChange={(e) => setTipoFilter(e.target.value)}
+          >
+            <option value="">Todos los tipos</option>
+            <option value="Normal">Normal</option>
+            <option value="Subtipo">Subtipo</option>
+            <option value="Legendarios">Legendarios</option>
+            <option value="Venerables">Venerables</option>
+            <option value="Desterrados">Desterrados</option>
+            <option value="Prohibidos">Prohibidos</option>
+            <option value="Extintos">Extintos</option>
+          </select>
+          <select
+            className={`${styles.searchInput} ${styles.searchSelect}`}
+            value={columnsPerRow}
+            onChange={(e) => setColumnsPerRow(Number(e.target.value))}
+            title="Criaturas por fila"
+          >
+            <option value={5}>5 por fila</option>
+            <option value={8}>8 por fila</option>
+          </select>
         </div>
 
         {filteredCriaturas.length === 0 ? (
@@ -273,9 +305,15 @@ export default function ManageCriaturasPage() {
             <p>Prueba con otro nombre o borra el filtro.</p>
           </div>
         ) : (
-          <div className={styles.criaturasGrid}>
+          <div 
+            className={`${styles.criaturasGrid} ${columnsPerRow === 8 ? styles.grid8 : ''}`}
+            style={{ gridTemplateColumns: `repeat(${columnsPerRow}, minmax(0, 1fr))` }}
+          >
             {filteredCriaturas.map((criatura) => (
-              <div key={criatura.id} className={styles.criaturaCard}>
+              <div key={criatura.id} className={`${styles.criaturaCard} ${styles.adminCard}`}>
+                <div className={styles.criaturaHeader}>
+                  <h3 className={styles.criaturaName}>{criatura.nombre}</h3>
+                </div>
                 {criatura.apariencia && criatura.apariencia.startsWith('http') && (
                   <img
                     src={criatura.apariencia}
@@ -283,28 +321,15 @@ export default function ManageCriaturasPage() {
                     className={styles.criaturaCardImage}
                   />
                 )}
-                <div className={styles.criaturaHeader}>
-                  <h3 className={styles.criaturaName}>{criatura.nombre}</h3>
-                  <div className={styles.criaturaMeta}>
-                    ID: {criatura.id}
-                    {criatura.clasificacion && (
-                      <span className={styles.clasificacionBadge}>
-                        {criatura.clasificacion}
-                      </span>
-                    )}
-                  </div>
-                </div>
 
-                <div className={styles.criaturaDetails}>
-                  {criatura.descripcion && (
-                    <p className={styles.criaturaDesc}>{criatura.descripcion}</p>
+                <div className={styles.adminDetailsStack}>
+                  {columnsPerRow !== 8 && criatura.clasificacion && (
+                    <p className={styles.adminDetailText} style={{ fontStyle: 'italic' }}>{criatura.clasificacion}</p>
                   )}
-
-                  <div className={styles.criaturaStats}>
-                    {criatura.danio_base && (
-                      <span>Daño: {criatura.danio_base}</span>
-                    )}
-                  </div>
+                  <p className={styles.adminDetailText}>ID: {criatura.id}</p>
+                  {columnsPerRow !== 8 && criatura.danio_base && (
+                    <p className={styles.adminDetailText}>Daño: {criatura.danio_base}</p>
+                  )}
                 </div>
 
                 <div className={styles.criaturaActions}>
@@ -357,6 +382,24 @@ export default function ManageCriaturasPage() {
                       value={editForm.clasificacion || ''}
                       onChange={(e) => handleInputChange('clasificacion', e.target.value)}
                     />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Tipo</label>
+                    <select
+                      className={styles.input}
+                      value={editForm.tipo || ''}
+                      onChange={(e) => handleInputChange('tipo', e.target.value)}
+                    >
+                      <option value="">Selecciona un tipo</option>
+                      <option value="Normal">Normal</option>
+                      <option value="Subtipo">Subtipo</option>
+                      <option value="Legendarios">Legendarios</option>
+                      <option value="Venerables">Venerables</option>
+                      <option value="Desterrados">Desterrados</option>
+                      <option value="Prohibidos">Prohibidos</option>
+                      <option value="Extintos">Extintos</option>
+                    </select>
                   </div>
 
                   <div className={styles.formGroup}>

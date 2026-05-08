@@ -158,25 +158,25 @@ export default function DashboardPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1>Mis Semilleros</h1>
-        <button className={styles.logoutButton} onClick={handleLogout}>
-          Cerrar sesión
-        </button>
+        <img 
+          src="https://res.cloudinary.com/dxdij0mxf/image/upload/v1778231980/image-removebg-preview_lomu1g.png" 
+          alt="Logo Mi Semillero Na'az" 
+          className={styles.headerLogo} 
+        />
+        <div className={styles.headerButtons}>
+          {user?.rol === 'administrador' && (
+            <button className={styles.adminButton} onClick={() => router.push('/dashboard/manage-criaturas')}>
+              Gestionar Criaturas
+            </button>
+          )}
+          <button className={styles.logoutButton} onClick={handleLogout}>
+            Cerrar sesión
+          </button>
+        </div>
       </div>
 
       <div className={styles.semillerosSection}>
         <h2 className={styles.sectionTitle}>Gestión de Semilleros</h2>
-
-        {user?.rol === 'administrador' && (
-          <div className={styles.adminSection}>
-            <h3>Opciones de Administrador</h3>
-            <div className={styles.adminButtons}>
-              <button className={styles.adminButton} onClick={() => router.push('/dashboard/manage-criaturas')}>
-                Gestionar Criaturas
-              </button>
-            </div>
-          </div>
-        )}
 
         <div className={styles.createForm}>
           <input
