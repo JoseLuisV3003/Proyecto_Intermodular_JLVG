@@ -42,6 +42,9 @@ export async function GET(request: NextRequest) {
       observaciones: criatura.observaciones,
       forma_ser: criatura.forma_ser,
       tipo: criatura.tipo,
+      HabilidadAtaque: criatura.HabilidadAtaque,
+      HabilidadDefensa: criatura.HabilidadDefensa,
+      PuntosVitales: criatura.PuntosVitales,
       habilidades: criatura.habilidades.map(ch => ({
         id: ch.habilidad.id,
         nombre: ch.habilidad.nombre,
@@ -96,7 +99,10 @@ export async function POST(request: NextRequest) {
       observaciones,
       forma_ser,
       habilidades,
-      depredadores
+      depredadores,
+      HabilidadAtaque,
+      HabilidadDefensa,
+      PuntosVitales
     } = body;
 
     // Validar campos requeridos
@@ -166,7 +172,10 @@ export async function POST(request: NextRequest) {
       descripcion: descripcion?.trim() || null,
       apariencia: apariencia?.trim() || null,
       observaciones: observaciones?.trim() || null,
-      forma_ser: forma_ser?.trim() || null
+      forma_ser: forma_ser?.trim() || null,
+      HabilidadAtaque: typeof HabilidadAtaque === 'number' ? HabilidadAtaque : null,
+      HabilidadDefensa: typeof HabilidadDefensa === 'number' ? HabilidadDefensa : null,
+      PuntosVitales: typeof PuntosVitales === 'number' ? PuntosVitales : null
     };
 
     if (habilidadesRelacion.length > 0) {

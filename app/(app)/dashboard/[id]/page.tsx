@@ -15,6 +15,9 @@ interface Criatura {
   apariencia?: string;
   observaciones?: string;
   forma_ser?: string;
+  HabilidadAtaque?: number;
+  HabilidadDefensa?: number;
+  PuntosVitales?: number;
   cantidad: number;
   habilidades: Array<{
     id: number;
@@ -30,6 +33,7 @@ interface Criatura {
 interface Semillero {
   id: number;
   nombre: string;
+  LimiteDeCombate: number;
   criaturas: Criatura[];
 }
 
@@ -45,6 +49,8 @@ export default function SemilleroDetailPage() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
   const [columnsPerRow, setColumnsPerRow] = useState(5);
+  const [isEditingLimite, setIsEditingLimite] = useState(false);
+  const [nuevoLimite, setNuevoLimite] = useState(5);
 
   const criaturasAMostrar = semillero
     ? semillero.criaturas.filter((criatura) => {
@@ -152,6 +158,27 @@ export default function SemilleroDetailPage() {
     }
   };
 
+  const handleEditLimite = () => {
+    setNuevoLimite(semillero?.LimiteDeCombate || 5);
+    setIsEditingLimite(true);
+  };
+
+  const handleSaveLimite = async () => {
+    try {
+      const response = await fetch(`/api/semilleros/${params.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ LimiteDeCombate: nuevoLimite }),
+      });
+      if (response.ok) {
+        setSemillero(prev => prev ? { ...prev, LimiteDeCombate: nuevoLimite } : null);
+        setIsEditingLimite(false);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   if (loading) {
     return (
       <div className={styles.container}>
@@ -177,10 +204,44 @@ export default function SemilleroDetailPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.headerTitle}>{semillero.nombre}</h1>
-        <button className={styles.logoutButton} onClick={handleBackToDashboard}>
-          ← Volver
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <h1 className={styles.headerTitle}>{semillero.nombre}</h1>
+          <div style={{ fontSize: '1rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-secondary)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+            {isEditingLimite ? (
+              <>
+                <span style={{ fontWeight: '600' }}>Límite de combate:</span>
+                <input 
+                  type="number" 
+                  value={nuevoLimite} 
+                  onChange={(e) => setNuevoLimite(parseInt(e.target.value) || 5)}
+                  className={styles.searchInput}
+                  style={{ width: '80px', padding: '0.3rem', margin: 0, height: 'auto' }}
+                  min="1"
+                />
+                <button onClick={handleSaveLimite} className={styles.createButton} style={{ padding: '0.3rem 0.8rem', margin: 0 }}>Guardar</button>
+                <button onClick={() => setIsEditingLimite(false)} className={styles.cancelButton} style={{ padding: '0.3rem 0.8rem', margin: 0 }}>Cancelar</button>
+              </>
+            ) : (
+              <>
+                <span style={{ fontWeight: '600' }}>Límite de combate:</span> 
+                <span style={{ color: 'var(--primary-color)', fontWeight: 'bold' }}>{semillero.LimiteDeCombate}</span>
+                <button onClick={handleEditLimite} className={styles.editButtonAction} style={{ padding: '0.2rem 0.6rem', fontSize: '0.8rem', marginLeft: '0.5rem' }}>Editar</button>
+              </>
+            )}
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button 
+            className={styles.createButton} 
+            onClick={() => router.push(`/dashboard/${semillero.id}/combate`)}
+            style={{ backgroundColor: '#ef4444', borderColor: '#ef4444' }}
+          >
+            ⚔️ Ir al Combate
+          </button>
+          <button className={styles.logoutButton} onClick={handleBackToDashboard}>
+            ← Volver
+          </button>
+        </div>
       </div>
 
       <div className={styles.semillerosSection}>
@@ -291,6 +352,24 @@ export default function SemilleroDetailPage() {
                   {selectedCriatura.danio_base && (
                     <div className={styles.detailRow}>
                       <strong>Daño Base:</strong> {selectedCriatura.danio_base}
+                    </div>
+                  )}
+
+                  {selectedCriatura.HabilidadAtaque != null && (
+                    <div className={styles.detailRow}>
+                      <strong>Habilidad Ataque:</strong> {selectedCriatura.HabilidadAtaque}
+                    </div>
+                  )}
+
+                  {selectedCriatura.HabilidadDefensa != null && (
+                    <div className={styles.detailRow}>
+                      <strong>Habilidad Defensa:</strong> {selectedCriatura.HabilidadDefensa}
+                    </div>
+                  )}
+
+                  {selectedCriatura.PuntosVitales != null && (
+                    <div className={styles.detailRow}>
+                      <strong>Puntos Vitales:</strong> {selectedCriatura.PuntosVitales}
                     </div>
                   )}
 

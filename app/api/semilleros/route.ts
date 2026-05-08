@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
     const userEmail = userSession.value;
     const body = await request.json();
-    const { nombre } = body;
+    const { nombre, LimiteDeCombate } = body;
 
     if (!nombre) {
       return NextResponse.json(
@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
     const nuevoSemillero = await prisma.semillero.create({
       data: {
         nombre,
+        LimiteDeCombate: LimiteDeCombate !== undefined ? Number(LimiteDeCombate) : 5,
         usuario_correo: userEmail
       }
     });

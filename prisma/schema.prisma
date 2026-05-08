@@ -23,6 +23,7 @@ enum usuarios_rol {
 model Semillero {
   id            Int      @id @default(autoincrement())
   nombre        String   @db.VarChar(100)
+  LimiteDeCombate Int    @default(5)
   usuario_correo String  @db.VarChar(50)
   usuario       usuarios @relation(fields: [usuario_correo], references: [correo], onDelete: Cascade)
   criaturas     SemilleroCriatura[]
@@ -51,6 +52,9 @@ model Criatura {
   apariencia    String?  @db.Text
   observaciones String?  @db.Text
   forma_ser     String?  @db.Text
+  HabilidadAtaque  Int?
+  HabilidadDefensa Int?
+  PuntosVitales    Int?
 
   habilidades   CriaturaHabilidad[]
   depredadores  CriaturaDepredador[]

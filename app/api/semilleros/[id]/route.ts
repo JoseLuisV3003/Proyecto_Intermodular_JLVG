@@ -61,11 +61,15 @@ export async function GET(
     const semilleroFormatted = {
       id: semillero.id,
       nombre: semillero.nombre,
+      LimiteDeCombate: semillero.LimiteDeCombate,
       criaturas: semillero.criaturas.map((sc) => ({
         id: sc.criatura.id,
         nombre: sc.criatura.nombre,
         clasificacion: sc.criatura.clasificacion,
         danio_base: sc.criatura.danio_base,
+        HabilidadAtaque: sc.criatura.HabilidadAtaque,
+        HabilidadDefensa: sc.criatura.HabilidadDefensa,
+        PuntosVitales: sc.criatura.PuntosVitales,
         germinacion: sc.criatura.germinacion,
         descripcion: sc.criatura.descripcion,
         apariencia: sc.criatura.apariencia,
@@ -118,11 +122,11 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { nombre } = body;
+    const { nombre, LimiteDeCombate } = body;
 
-    if (!nombre) {
+    if (!nombre && LimiteDeCombate === undefined) {
       return NextResponse.json(
-        { error: 'El nombre es requerido' },
+        { error: 'Se requiere nombre o LimiteDeCombate' },
         { status: 400 }
       );
     }
@@ -143,13 +147,15 @@ export async function PUT(
     }
 
     // Actualizar el semillero
+    const updateData: any = {};
+    if (nombre !== undefined) updateData.nombre = nombre;
+    if (LimiteDeCombate !== undefined) updateData.LimiteDeCombate = Number(LimiteDeCombate);
+
     const semilleroActualizado = await prisma.semillero.update({
       where: {
         id: semilleroId
       },
-      data: {
-        nombre
-      }
+      data: updateData
     });
 
     return NextResponse.json({ semillero: semilleroActualizado });

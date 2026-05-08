@@ -21,6 +21,9 @@ interface Criatura {
   clasificacion?: string;
   tipo?: string;
   danio_base?: number;
+  HabilidadAtaque?: number;
+  HabilidadDefensa?: number;
+  PuntosVitales?: number;
   germinacion?: string;
   descripcion?: string;
   apariencia?: string;
@@ -153,6 +156,9 @@ export default function ManageCriaturasPage() {
       const dataToSend: any = {
         ...editForm,
         danio_base: typeof editForm.danio_base === 'number' ? editForm.danio_base : null,
+        HabilidadAtaque: typeof editForm.HabilidadAtaque === 'number' ? editForm.HabilidadAtaque : null,
+        HabilidadDefensa: typeof editForm.HabilidadDefensa === 'number' ? editForm.HabilidadDefensa : null,
+        PuntosVitales: typeof editForm.PuntosVitales === 'number' ? editForm.PuntosVitales : null,
         habilidades: (editForm.habilidades || [])
           .filter((habilidad) => habilidad.nombre?.trim())
           .map((habilidad) => ({
@@ -409,6 +415,36 @@ export default function ManageCriaturasPage() {
                       className={styles.input}
                       value={editForm.danio_base || ''}
                       onChange={(e) => handleInputChange('danio_base', parseInt(e.target.value) || 0)}
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Habilidad Ataque</label>
+                    <input
+                      type="number"
+                      className={styles.input}
+                      value={editForm.HabilidadAtaque || ''}
+                      onChange={(e) => handleInputChange('HabilidadAtaque', parseInt(e.target.value) || 0)}
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Habilidad Defensa</label>
+                    <input
+                      type="number"
+                      className={styles.input}
+                      value={editForm.HabilidadDefensa || ''}
+                      onChange={(e) => handleInputChange('HabilidadDefensa', parseInt(e.target.value) || 0)}
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Puntos Vitales</label>
+                    <input
+                      type="number"
+                      className={styles.input}
+                      value={editForm.PuntosVitales || ''}
+                      onChange={(e) => handleInputChange('PuntosVitales', parseInt(e.target.value) || 0)}
                     />
                   </div>
 

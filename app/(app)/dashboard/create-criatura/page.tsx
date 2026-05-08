@@ -11,6 +11,9 @@ export default function CreateCriaturaPage() {
     clasificacion: '',
     tipo: '',
     danio_base: '',
+    HabilidadAtaque: '',
+    HabilidadDefensa: '',
+    PuntosVitales: '',
     germinacion: '',
     descripcion: '',
     apariencia: '',
@@ -67,6 +70,9 @@ export default function CreateCriaturaPage() {
       const dataToSend = {
         ...formData,
         danio_base: formData.danio_base ? parseInt(formData.danio_base) : null,
+        HabilidadAtaque: formData.HabilidadAtaque ? parseInt(formData.HabilidadAtaque) : null,
+        HabilidadDefensa: formData.HabilidadDefensa ? parseInt(formData.HabilidadDefensa) : null,
+        PuntosVitales: formData.PuntosVitales ? parseInt(formData.PuntosVitales) : null,
         habilidades: habilidades
           .filter(habilidad => habilidad.nombre.trim())
           .map(habilidad => ({
@@ -168,6 +174,42 @@ export default function CreateCriaturaPage() {
               name="danio_base"
               className={styles.input}
               value={formData.danio_base}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="HabilidadAtaque" className={styles.label}>Habilidad Ataque</label>
+            <input
+              type="number"
+              id="HabilidadAtaque"
+              name="HabilidadAtaque"
+              className={styles.input}
+              value={formData.HabilidadAtaque}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="HabilidadDefensa" className={styles.label}>Habilidad Defensa</label>
+            <input
+              type="number"
+              id="HabilidadDefensa"
+              name="HabilidadDefensa"
+              className={styles.input}
+              value={formData.HabilidadDefensa}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="PuntosVitales" className={styles.label}>Puntos Vitales</label>
+            <input
+              type="number"
+              id="PuntosVitales"
+              name="PuntosVitales"
+              className={styles.input}
+              value={formData.PuntosVitales}
               onChange={handleChange}
             />
           </div>

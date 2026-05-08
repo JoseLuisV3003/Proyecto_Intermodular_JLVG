@@ -20,6 +20,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [semilleros, setSemilleros] = useState<Semillero[]>([]);
   const [nuevoNombre, setNuevoNombre] = useState('');
+  const [nuevoLimite, setNuevoLimite] = useState(5);
   const [user, setUser] = useState<User | null>(null);
 
   const handleLogout = async () => {
@@ -75,13 +76,14 @@ export default function DashboardPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nombre: nuevoNombre }),
+        body: JSON.stringify({ nombre: nuevoNombre, LimiteDeCombate: nuevoLimite }),
       });
 
       if (response.ok) {
         const data = await response.json();
         setSemilleros([...semilleros, data.semillero]);
         setNuevoNombre('');
+        setNuevoLimite(5);
       }
     } catch (error) {
       console.error('Error creando semillero:', error);
@@ -185,6 +187,16 @@ export default function DashboardPage() {
             value={nuevoNombre}
             onChange={(e) => setNuevoNombre(e.target.value)}
             placeholder="Nombre del nuevo semillero"
+          />
+          <input
+            type="number"
+            className={styles.createInput}
+            value={nuevoLimite}
+            onChange={(e) => setNuevoLimite(parseInt(e.target.value) || 5)}
+            placeholder="Límite de combate"
+            min="1"
+            style={{ width: '150px' }}
+            title="Límite de combate"
           />
           <button
             className={styles.createButton}
