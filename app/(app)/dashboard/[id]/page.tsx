@@ -37,6 +37,12 @@ interface Semillero {
   criaturas: Criatura[];
 }
 
+interface Preset {
+  id: number;
+  nombre: string;
+  criaturas: Array<Criatura & { cantidad_en_preset: number }>;
+}
+
 export default function SemilleroDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -51,6 +57,21 @@ export default function SemilleroDetailPage() {
   const [columnsPerRow, setColumnsPerRow] = useState(5);
   const [isEditingLimite, setIsEditingLimite] = useState(false);
   const [nuevoLimite, setNuevoLimite] = useState(5);
+
+  // Preset Selection State
+  const [isPresetMode, setIsPresetMode] = useState(false);
+  const [presetSelection, setPresetSelection] = useState<Criatura[]>([]);
+  const [isPresetModalOpen, setIsPresetModalOpen] = useState(false);
+  const [presetName, setPresetName] = useState('');
+  const [presets, setPresets] = useState<Preset[]>([]);
+  const [isPresetsDropdownOpen, setIsPresetsDropdownOpen] = useState(false);
+  const [editingPresetId, setEditingPresetId] = useState<number | null>(null);
+  const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
 
   const criaturasAMostrar = semillero
     ? semillero.criaturas.filter((criatura) => {
@@ -68,8 +89,21 @@ export default function SemilleroDetailPage() {
   useEffect(() => {
     if (params.id) {
       cargarSemillero();
+      cargarPresets();
     }
   }, [params.id]);
+
+  const cargarPresets = async () => {
+    try {
+      const response = await fetch(`/api/semilleros/${params.id}/presets`);
+      if (response.ok) {
+        const data = await response.json();
+        setPresets(data.presets);
+      }
+    } catch (error) {
+      console.error('Error cargando presets:', error);
+    }
+  };
 
   const cargarSemillero = async () => {
     try {
@@ -89,7 +123,11 @@ export default function SemilleroDetailPage() {
   };
 
   const handleCriaturaClick = (criatura: Criatura) => {
-    setSelectedCriatura(criatura);
+    if (isPresetMode) {
+      handleAddToSelection(null as any, criatura);
+    } else {
+      setSelectedCriatura(criatura);
+    }
   };
 
   const handleCloseModal = () => {
@@ -176,6 +214,112 @@ export default function SemilleroDetailPage() {
       }
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const handleAddToSelection = (e: React.MouseEvent | null, criatura: Criatura) => {
+    if (e) e.stopPropagation();
+    if (!semillero) return;
+
+    if (presetSelection.length >= semillero.LimiteDeCombate) {
+      return;
+    }
+
+    const countSelected = presetSelection.filter(c => c.id === criatura.id).length;
+    if (countSelected >= criatura.cantidad) {
+      return;
+    }
+
+    setPresetSelection([...presetSelection, criatura]);
+  };
+
+  const handleRemoveFromSelection = (indexToRemove: number) => {
+    setPresetSelection(presetSelection.filter((_, i) => i !== indexToRemove));
+  };
+
+  const handleGuardarPreset = async () => {
+    if (!presetName.trim()) {
+      showNotification('Por favor, introduce un nombre para la formación.', 'error');
+      return;
+    }
+
+    if (presetSelection.length === 0) {
+      showNotification('Selecciona al menos una criatura para guardar una formación.', 'error');
+      return;
+    }
+
+    const criaturasAgrupadas: { [key: number]: number } = {};
+    presetSelection.forEach(c => {
+      criaturasAgrupadas[c.id] = (criaturasAgrupadas[c.id] || 0) + 1;
+    });
+
+    const dataToSend = {
+      nombre: presetName,
+      criaturas: Object.entries(criaturasAgrupadas).map(([id, cantidad]) => ({
+        id: parseInt(id),
+        cantidad
+      }))
+    };
+
+    try {
+      const method = editingPresetId ? 'PUT' : 'POST';
+      const url = editingPresetId
+        ? `/api/presets/${editingPresetId}`
+        : `/api/semilleros/${params.id}/presets`;
+
+      const response = await fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataToSend)
+      });
+
+      if (response.ok) {
+        setPresetName('');
+        setIsPresetModalOpen(false);
+        setPresetSelection([]);
+        setIsPresetMode(false);
+        setEditingPresetId(null);
+        cargarPresets();
+        showNotification(editingPresetId ? 'Formación actualizada correctamente.' : 'Formación guardada correctamente.', 'success');
+      } else {
+        showNotification('Error al guardar la formación.', 'error');
+      }
+    } catch (error) {
+      console.error('Error guardando preset:', error);
+      showNotification('Error al guardar la formación.', 'error');
+    }
+  };
+
+  const handleEditPreset = (preset: any) => {
+    setEditingPresetId(preset.id);
+    setPresetName(preset.nombre);
+
+    const selection: Criatura[] = [];
+    preset.criaturas.forEach((c: any) => {
+      const criaturaBase = semillero?.criaturas.find(cb => cb.id === c.id);
+      if (criaturaBase) {
+        for (let i = 0; i < c.cantidad_en_preset; i++) {
+          selection.push(criaturaBase);
+        }
+      }
+    });
+
+    setPresetSelection(selection);
+    setIsPresetMode(true);
+    setIsPresetsDropdownOpen(false);
+  };
+
+  const handleEliminarPreset = async (id: number) => {
+    // Acción directa sin confirmación por petición del usuario
+    try {
+      const response = await fetch(`/api/presets/${id}`, { method: 'DELETE' });
+      if (response.ok) {
+        showNotification('Formación eliminada correctamente.', 'success');
+        cargarPresets();
+      }
+    } catch (error) {
+      console.error('Error eliminando preset:', error);
+      showNotification('Error al eliminar la formación.', 'error');
     }
   };
 
@@ -278,9 +422,108 @@ export default function SemilleroDetailPage() {
             <option value={8}>8 por fila</option>
           </select>
           {semillero.criaturas.length > 0 && (
-            <button className={styles.createButton} onClick={handleAddCriaturas} style={{ margin: 0, padding: '0.5rem 1rem' }}>
-              Añadir Más Criaturas
-            </button>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <button className={styles.createButton} onClick={handleAddCriaturas} style={{ margin: 0, padding: '0.5rem 1rem' }}>
+                Añadir más Na'az
+              </button>
+
+              <div style={{ position: 'relative' }}>
+                <button
+                  className={styles.createButton}
+                  onClick={() => setIsPresetsDropdownOpen(!isPresetsDropdownOpen)}
+                  style={{ margin: 0, padding: '0.5rem 1rem', background: '#6366f1', borderColor: '#6366f1' }}
+                >
+                  Formaciones ▾
+                </button>
+
+                {isPresetsDropdownOpen && (
+                  <div className={styles.modernModalOverlay} onClick={() => setIsPresetsDropdownOpen(false)}>
+                    <div className={styles.modernModalContent} onClick={e => e.stopPropagation()}>
+                      <div className={styles.modernModalHeader}>
+                        <h2>Gestión de Formaciones</h2>
+                        <button className={styles.modernCloseButton} onClick={() => setIsPresetsDropdownOpen(false)}>×</button>
+                      </div>
+
+                      <div className={styles.modernModalBody}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', gap: '2rem' }}>
+                          <p style={{ color: '#475569', margin: 0, fontSize: '1.1rem' }}>Administra tus formaciones de combate guardadas.</p>
+                          <button
+                            onClick={() => { setIsPresetMode(true); setIsPresetsDropdownOpen(false); setPresetSelection([]); setEditingPresetId(null); setPresetName(''); }}
+                            className={styles.createButton}
+                            style={{ background: '#10b981', borderColor: '#10b981', padding: '0.75rem 1.5rem', margin: 0, fontSize: '1rem' }}
+                          >
+                            + Crear nueva formación
+                          </button>
+                        </div>
+
+                        {presets.length === 0 ? (
+                          <div className={styles.modernEmptyState}>
+
+                            <h3 className={styles.modernEmptyStateTitle}>Aún no has creado ninguna formación</h3>
+                            <p className={styles.modernEmptyStateText}>Tus formaciones aparecerán aquí.</p>
+                          </div>
+                        ) : (
+                          <div className={styles.presetsGrid}>
+                            {presets.map(p => (
+                              <div key={p.id} className={styles.modernPresetCard}>
+                                <div className={styles.presetCardHeader}>
+                                  <div className={styles.presetCardInfo}>
+                                    <strong className={styles.presetCardName}>{p.nombre}</strong>
+                                    <span className={styles.presetCardCount}>
+                                      {p.criaturas.reduce((acc: number, c) => acc + (c.cantidad_en_preset || 0), 0)} Na'az
+                                    </span>
+                                  </div>
+                                </div>
+
+                                <div className={styles.presetIconsRow}>
+                                  {p.criaturas.slice(0, 6).map((c, idx: number) => (
+                                    <div key={idx} className={styles.presetMiniIcon}>
+                                      {c.apariencia ? (
+                                        <img src={c.apariencia} alt={c.nombre} />
+                                      ) : (
+                                        <div className={styles.presetMiniIconPlaceholder}>{c.nombre[0]}</div>
+                                      )}
+                                    </div>
+                                  ))}
+                                  {p.criaturas.length > 6 && (
+                                    <div className={styles.presetMoreBadge}>+{p.criaturas.length - 6}</div>
+                                  )}
+                                </div>
+
+                                <div className={styles.presetActions}>
+                                  <button onClick={() => handleEditPreset(p)} className={styles.editButtonAction} style={{ flex: 1, padding: '0.6rem', fontSize: '0.9rem', borderRadius: '10px' }}>Editar</button>
+                                  <button onClick={() => handleEliminarPreset(p.id)} className={styles.cancelButton} style={{ flex: 1, padding: '0.6rem', fontSize: '0.9rem', borderRadius: '10px', color: '#ef4444' }}>Eliminar</button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {isPresetMode && (
+                <>
+                  <button
+                    className={styles.createButton}
+                    onClick={() => setIsPresetModalOpen(true)}
+                    style={{ margin: 0, padding: '0.5rem 1rem', background: '#10b981', borderColor: '#10b981' }}
+                    disabled={presetSelection.length === 0}
+                  >
+                    Guardar ({presetSelection.length})
+                  </button>
+                  <button
+                    className={styles.cancelButton}
+                    onClick={() => { setIsPresetMode(false); setPresetSelection([]); setEditingPresetId(null); setPresetName(''); }}
+                    style={{ margin: 0, padding: '0.5rem 1rem' }}
+                  >
+                    Cancelar
+                  </button>
+                </>
+              )}
+            </div>
           )}
         </div>
 
@@ -292,10 +535,10 @@ export default function SemilleroDetailPage() {
             </div>
           ) : (
             <div className={styles.emptyState}>
-              <h3>No tienes criaturas en este semillero</h3>
-              <p>Añade criaturas para empezar tu colección.</p>
+              <h3>No tienes Na'az en este semillero</h3>
+              <p>Añade Na'az para empezar tu colección.</p>
               <button className={styles.createButton} onClick={handleAddCriaturas}>
-                Añadir Criaturas
+                Añadir Na'az
               </button>
             </div>
           )
@@ -307,12 +550,26 @@ export default function SemilleroDetailPage() {
             {criaturasAMostrar.map((criatura) => (
               <div
                 key={criatura.id}
-                className={styles.immersiveCriaturaCard}
+                className={`${styles.immersiveCriaturaCard} ${isPresetMode ? styles.presetModeCard : ''}`}
                 onClick={() => handleCriaturaClick(criatura)}
+                style={{
+                  border: isPresetMode && presetSelection.filter(c => c.id === criatura.id).length > 0 ? '2px solid #6366f1' : undefined,
+                  boxShadow: isPresetMode && presetSelection.filter(c => c.id === criatura.id).length > 0 ? '0 0 15px rgba(99, 102, 241, 0.3)' : undefined,
+                  transform: isPresetMode && presetSelection.filter(c => c.id === criatura.id).length > 0 ? 'scale(1.02)' : undefined,
+                }}
               >
                 <div className={styles.criaturaHeader}>
                   <h3 className={styles.immersiveCriaturaName}>{criatura.nombre}</h3>
-                  <span className={styles.immersiveBadge}>x{criatura.cantidad}</span>
+                  <span className={styles.immersiveBadge} style={{
+                    background: isPresetMode && presetSelection.filter(c => c.id === criatura.id).length > 0 ? '#6366f1' : undefined,
+                    transition: 'all 0.2s'
+                  }}>
+                    {isPresetMode ? (
+                      `${presetSelection.filter(c => c.id === criatura.id).length} / ${criatura.cantidad}`
+                    ) : (
+                      `x${criatura.cantidad}`
+                    )}
+                  </span>
                 </div>
                 {criatura.apariencia && criatura.apariencia.startsWith('http') && (
                   <img
@@ -516,6 +773,173 @@ export default function SemilleroDetailPage() {
           </div>
         </div>
       )}
+      {/* Barra de Selección de Preset */}
+      {presetSelection.length > 0 && (
+        <div style={{
+          position: 'fixed',
+          bottom: '2rem',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'rgba(15, 23, 42, 0.95)',
+          backdropFilter: 'blur(12px)',
+          padding: '1.5rem 2rem',
+          borderRadius: '24px',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '1.25rem',
+          zIndex: 900,
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          animation: 'slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          maxWidth: '90vw',
+          width: 'fit-content',
+          minWidth: '400px'
+        }}>
+          {/* Fila Superior: Contador y Acciones */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '3rem' }}>
+            <div style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ background: '#3b82f6', color: 'white', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '800', fontSize: '1.1rem' }}>
+                {presetSelection.length} / {semillero.LimiteDeCombate}
+              </div>
+              <span style={{ color: '#94a3b8', fontSize: '0.95rem', fontWeight: '500' }}>Na'az en formación</span>
+            </div>
+
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <button
+                className={styles.cancelButton}
+                onClick={() => { setPresetSelection([]); setIsPresetMode(false); setEditingPresetId(null); setPresetName(''); }}
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '0.6rem 1.2rem', margin: 0 }}
+              >
+                Cancelar
+              </button>
+              <button
+                className={styles.createButton}
+                onClick={() => setIsPresetModalOpen(true)}
+                style={{ background: '#6366f1', borderColor: '#6366f1', padding: '0.6rem 1.5rem', margin: 0, fontWeight: '700' }}
+              >
+                {editingPresetId ? 'Actualizar Formación' : 'Guardar Formación'}
+              </button>
+            </div>
+          </div>
+
+          {/* Fila Inferior: Iconos seleccionados con Wrap */}
+          <div style={{
+            display: 'flex',
+            gap: '0.6rem',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            maxHeight: '160px',
+            overflowY: 'auto',
+            padding: '0.5rem',
+            background: 'rgba(0,0,0,0.2)',
+            borderRadius: '16px'
+          }}>
+            {presetSelection.map((c, i) => (
+              <div
+                key={`${c.id}-${i}`}
+                onClick={() => handleRemoveFromSelection(i)}
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '12px',
+                  background: '#1e293b',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  transition: 'all 0.2s',
+                  flexShrink: 0
+                }}
+                title={`Quitar ${c.nombre}`}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1)'; e.currentTarget.style.borderColor = '#ef4444'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+              >
+                <div style={{ width: '100%', height: '100%', borderRadius: '10px', overflow: 'hidden' }}>
+                  {c.apariencia ? (
+                    <img src={c.apariencia} alt={c.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <span style={{ fontSize: '0.75rem', color: 'white', fontWeight: 'bold' }}>{c.nombre[0]}</span>
+                  )}
+                </div>
+                <div style={{
+                  position: 'absolute',
+                  top: '-5px',
+                  right: '-5px',
+                  background: '#ef4444',
+                  color: 'white',
+                  width: '18px',
+                  height: '18px',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                  zIndex: 2,
+                  border: '2px solid #0f172a'
+                }}>
+                  ×
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Modal para Guardar Formación */}
+      {isPresetModalOpen && (
+        <div className={styles.modernModalOverlay} onClick={() => setIsPresetModalOpen(false)}>
+          <div className={styles.modernModalContent} onClick={e => e.stopPropagation()} style={{ maxWidth: '450px' }}>
+            <div className={styles.modernModalHeader}>
+              <h2>Guardar Formación</h2>
+              <button className={styles.modernCloseButton} onClick={() => setIsPresetModalOpen(false)}>×</button>
+            </div>
+            <div className={styles.modernModalBody}>
+              <p style={{ marginBottom: '1.5rem', fontSize: '1rem', color: '#64748b' }}>
+                Estás guardando una formación con {presetSelection.length} Na'az.
+              </p>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '700', fontSize: '0.9rem', color: '#475569' }}>Nombre de la formación</label>
+                <input
+                  type="text"
+                  className={styles.createInput}
+                  placeholder="Ej: Batallón Vanguardia"
+                  value={presetName}
+                  onChange={(e) => setPresetName(e.target.value)}
+                  autoFocus
+                  onKeyDown={(e) => e.key === 'Enter' && handleGuardarPreset()}
+                  style={{ width: '100%', padding: '0.8rem', borderRadius: '12px' }}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                <button className={styles.cancelButton} onClick={() => setIsPresetModalOpen(false)} style={{ padding: '0.75rem 1.5rem' }}>Cancelar</button>
+                <button className={styles.createButton} onClick={handleGuardarPreset} style={{ padding: '0.75rem 1.5rem', background: '#10b981', borderColor: '#10b981' }}>Guardar Formación</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sistema de Toasts */}
+      {notification && (
+        <div className={styles.toastContainer}>
+          <div className={`${styles.toast} ${notification.type === 'success' ? styles.toastSuccess : styles.toastError}`}>
+            <span style={{ fontSize: '1.2rem' }}>{notification.type === 'success' ? '✓' : '✕'}</span>
+            {notification.message}
+          </div>
+        </div>
+      )}
+
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        @keyframes slideUp {
+          from { transform: translate(-50%, 100%); opacity: 0; }
+          to { transform: translate(-50%, 0); opacity: 1; }
+        }
+      `}} />
     </div>
   );
 }

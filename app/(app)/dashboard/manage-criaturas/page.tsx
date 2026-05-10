@@ -41,6 +41,12 @@ export default function ManageCriaturasPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<Partial<Criatura>>({});
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
   const [searchTerm, setSearchTerm] = useState('');
   const [tipoFilter, setTipoFilter] = useState('');
   const [columnsPerRow, setColumnsPerRow] = useState(5);
@@ -183,23 +189,21 @@ export default function ManageCriaturasPage() {
         setCriaturas(criaturas.map(c =>
           c.id === editingId ? data.criatura : c
         ));
+        showNotification('Criatura actualizada correctamente.', 'success');
         setEditingId(null);
         setEditForm({});
       } else {
         const data = await response.json();
-        alert(data.error || 'Error al actualizar criatura');
+        showNotification(data.error || 'Error al actualizar criatura', 'error');
       }
     } catch (error) {
       console.error('Error actualizando criatura:', error);
-      alert('Error al actualizar criatura');
+      showNotification('Error al actualizar criatura', 'error');
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar esta criatura? Esta acción no se puede deshacer.')) {
-      return;
-    }
-
+    // Eliminación directa por petición del usuario
     setDeletingId(id);
     try {
       const response = await fetch(`/api/criaturas/${id}`, {
@@ -208,13 +212,14 @@ export default function ManageCriaturasPage() {
 
       if (response.ok) {
         setCriaturas(criaturas.filter(c => c.id !== id));
+        showNotification('Criatura eliminada correctamente.', 'success');
       } else {
         const data = await response.json();
-        alert(data.error || 'Error al eliminar criatura');
+        showNotification(data.error || 'Error al eliminar criatura', 'error');
       }
     } catch (error) {
       console.error('Error eliminando criatura:', error);
-      alert('Error al eliminar criatura');
+      showNotification('Error al eliminar criatura', 'error');
     } finally {
       setDeletingId(null);
     }
@@ -257,8 +262,8 @@ export default function ManageCriaturasPage() {
     <div className={styles.container}>
       <div className={styles.header}>
         <div>
-          <h1>Gestionar Criaturas</h1>
-          <p className={styles.subTitle}>Crea, edita o elimina criaturas desde aquí.</p>
+          <h1 className={styles.headerTitle}>Gestionar Criaturas</h1>
+          <p className={styles.subTitle} style={{ color: 'rgba(255, 255, 255, 0.7)', fontWeight: '500' }}>Crea, edita o elimina criaturas desde aquí.</p>
         </div>
         <div className={styles.headerButtons}>
           <button className={styles.adminButton} onClick={() => router.push('/dashboard/create-criatura')}>
@@ -272,16 +277,17 @@ export default function ManageCriaturasPage() {
 
       <div className={styles.semillerosSection}>
         <h2 className={styles.sectionTitle}>Criaturas en la Base de Datos</h2>
-        <div className={styles.searchContainer}>
+        <div className={styles.searchContainer} style={{ marginBottom: '2rem' }}>
           <input
             type="text"
-            className={styles.searchInput}
+            className={styles.adminSearchInput}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar criaturas por nombre o clasificación..."
+            placeholder="Buscar por nombre, clasificación o ID..."
           />
           <select
-            className={`${styles.searchInput} ${styles.searchSelect}`}
+            className={styles.adminSearchInput}
+            style={{ flex: '0 0 220px' }}
             value={tipoFilter}
             onChange={(e) => setTipoFilter(e.target.value)}
           >
@@ -295,10 +301,10 @@ export default function ManageCriaturasPage() {
             <option value="Extintos">Extintos</option>
           </select>
           <select
-            className={`${styles.searchInput} ${styles.searchSelect}`}
+            className={styles.adminSearchInput}
+            style={{ flex: '0 0 160px' }}
             value={columnsPerRow}
             onChange={(e) => setColumnsPerRow(Number(e.target.value))}
-            title="Criaturas por fila"
           >
             <option value={5}>5 por fila</option>
             <option value={8}>8 por fila</option>
@@ -311,7 +317,7 @@ export default function ManageCriaturasPage() {
             <p>Prueba con otro nombre o borra el filtro.</p>
           </div>
         ) : (
-          <div 
+          <div
             className={`${styles.criaturasGrid} ${columnsPerRow === 8 ? styles.grid8 : ''}`}
             style={{ gridTemplateColumns: `repeat(${columnsPerRow}, minmax(0, 1fr))` }}
           >
@@ -454,7 +460,8 @@ export default function ManageCriaturasPage() {
                       className={styles.textarea}
                       value={editForm.germinacion || ''}
                       onChange={(e) => handleInputChange('germinacion', e.target.value)}
-                      rows={2}
+                      rows={3}
+                      placeholder="Proceso de nacimiento y crecimiento..."
                     />
                   </div>
 
@@ -464,7 +471,8 @@ export default function ManageCriaturasPage() {
                       className={styles.textarea}
                       value={editForm.descripcion || ''}
                       onChange={(e) => handleInputChange('descripcion', e.target.value)}
-                      rows={3}
+                      rows={6}
+                      placeholder="Historia, comportamiento y detalles biológicos..."
                     />
                   </div>
 
@@ -488,7 +496,8 @@ export default function ManageCriaturasPage() {
                       className={styles.textarea}
                       value={editForm.observaciones || ''}
                       onChange={(e) => handleInputChange('observaciones', e.target.value)}
-                      rows={2}
+                      rows={3}
+                      placeholder="Notas adicionales para el administrador..."
                     />
                   </div>
 
@@ -505,34 +514,40 @@ export default function ManageCriaturasPage() {
                   <div className={styles.formSection}>
                     <h2 className={styles.sectionSubtitle}>Habilidades</h2>
                     {(editForm.habilidades || []).map((habilidad, index) => (
-                      <div key={index} className={styles.dynamicGroup}>
-                        <div className={styles.formGroup}>
-                          <label className={styles.label}>Nombre de habilidad</label>
-                          <input
-                            type="text"
-                            className={styles.input}
-                            value={habilidad.nombre || ''}
-                            onChange={(e) => handleHabilidadChange(index, 'nombre', e.target.value)}
-                            placeholder="Ej: Combate"
-                          />
+                      <div key={index} className={styles.formSection} style={{ border: '1px solid #e2e8f0', padding: '1.5rem', borderRadius: '12px', background: '#f8fafc', marginBottom: '1.5rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1rem' }}>
+                          <div className={styles.formGroup}>
+                            <label className={styles.label}>Nombre de habilidad</label>
+                            <input
+                              type="text"
+                              className={styles.input}
+                              value={habilidad.nombre || ''}
+                              onChange={(e) => handleHabilidadChange(index, 'nombre', e.target.value)}
+                              placeholder="Ej: Combate"
+                            />
+                          </div>
+                          <div className={styles.formGroup}>
+                            <label className={styles.label}>Descripción de la habilidad</label>
+                            <textarea
+                              className={styles.textarea}
+                              value={habilidad.descripcion || ''}
+                              onChange={(e) => handleHabilidadChange(index, 'descripcion', e.target.value)}
+                              rows={4}
+                              style={{ minHeight: '120px' }}
+                              placeholder="Describe detalladamente el efecto de esta habilidad..."
+                            />
+                          </div>
                         </div>
-                        <div className={styles.formGroup}>
-                          <label className={styles.label}>Descripción</label>
-                          <textarea
-                            className={styles.textarea}
-                            value={habilidad.descripcion || ''}
-                            onChange={(e) => handleHabilidadChange(index, 'descripcion', e.target.value)}
-                            rows={2}
-                            placeholder="Descripción de la habilidad"
-                          />
+                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                          <button
+                            type="button"
+                            className={styles.removeButton}
+                            onClick={() => handleRemoveHabilidad(index)}
+                            style={{ color: '#ef4444', borderColor: '#fecaca', background: '#fef2f2' }}
+                          >
+                            Eliminar habilidad
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          className={styles.removeButton}
-                          onClick={() => handleRemoveHabilidad(index)}
-                        >
-                          Eliminar habilidad
-                        </button>
                       </div>
                     ))}
                     <button
@@ -593,6 +608,15 @@ export default function ManageCriaturasPage() {
           </div>
         )}
       </div>
+      {/* Sistema de Toasts */}
+      {notification && (
+        <div className={styles.toastContainer}>
+          <div className={`${styles.toast} ${notification.type === 'success' ? styles.toastSuccess : styles.toastError}`}>
+            <span style={{ fontSize: '1.2rem' }}>{notification.type === 'success' ? '✓' : '✕'}</span>
+            {notification.message}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

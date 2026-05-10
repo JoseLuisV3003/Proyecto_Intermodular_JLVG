@@ -40,6 +40,12 @@ export default function DashboardPage() {
   const [editandoNombre, setEditandoNombre] = useState('');
   const [editandoColor, setEditandoColor] = useState('');
   const [loading, setLoading] = useState(true);
+  const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
 
   useEffect(() => {
     cargarSemilleros();
@@ -143,10 +149,7 @@ export default function DashboardPage() {
   };
 
   const handleDeleteSemillero = async (id: number) => {
-    if (!confirm('¿Estás seguro de que quieres borrar este semillero? Esta acción no se puede deshacer.')) {
-      return;
-    }
-
+    // Eliminación directa por petición del usuario
     try {
       const response = await fetch(`/api/semilleros/${id}`, {
         method: 'DELETE',
@@ -154,16 +157,18 @@ export default function DashboardPage() {
 
       if (response.ok) {
         setSemilleros(semilleros.filter((semillero) => semillero.id !== id));
+        showNotification('Semillero eliminado correctamente.', 'success');
         if (editandoId === id) {
           setEditandoId(null);
           setEditandoNombre('');
           setEditandoColor('');
         }
       } else {
-        console.error('Error borrando semillero');
+        showNotification('Error al eliminar el semillero.', 'error');
       }
     } catch (error) {
       console.error('Error borrando semillero:', error);
+      showNotification('Error de conexión.', 'error');
     }
   };
 
@@ -333,6 +338,15 @@ export default function DashboardPage() {
                 {editandoId !== null ? 'Guardar Cambios' : 'Crear Semillero'}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Sistema de Toasts */}
+      {notification && (
+        <div className={styles.toastContainer}>
+          <div className={`${styles.toast} ${notification.type === 'success' ? styles.toastSuccess : styles.toastError}`}>
+            <span style={{ fontSize: '1.2rem' }}>{notification.type === 'success' ? '✓' : '✕'}</span>
+            {notification.message}
           </div>
         </div>
       )}

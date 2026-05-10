@@ -28,8 +28,31 @@ model Semillero {
   usuario_correo String  @db.VarChar(50)
   usuario       usuarios @relation(fields: [usuario_correo], references: [correo], onDelete: Cascade)
   criaturas     SemilleroCriatura[]
+  presets       Preset[]
 
   @@map("semilleros")
+}
+
+model Preset {
+  id           Int      @id @default(autoincrement())
+  nombre       String   @db.VarChar(100)
+  semillero_id Int
+  semillero    Semillero @relation(fields: [semillero_id], references: [id], onDelete: Cascade)
+  criaturas    PresetCriatura[]
+
+  @@map("presets")
+}
+
+model PresetCriatura {
+  preset_id    Int
+  criatura_id  Int
+  cantidad     Int      @default(1)
+
+  preset       Preset   @relation(fields: [preset_id], references: [id], onDelete: Cascade)
+  criatura     Criatura @relation(fields: [criatura_id], references: [id], onDelete: Cascade)
+
+  @@id([preset_id, criatura_id])
+  @@map("preset_criaturas")
 }
 
 enum CriaturaTipo {
@@ -60,6 +83,7 @@ model Criatura {
   habilidades   CriaturaHabilidad[]
   depredadores  CriaturaDepredador[]
   semilleros    SemilleroCriatura[]
+  presets       PresetCriatura[]
 
   @@map("criaturas")
 }
