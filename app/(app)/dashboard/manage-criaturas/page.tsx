@@ -47,6 +47,62 @@ export default function ManageCriaturasPage() {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3000);
   };
+
+  const handleExportData = async () => {
+    try {
+      const response = await fetch('/api/admin/backup');
+      if (!response.ok) throw new Error('Error al exportar datos');
+      const data = await response.json();
+      
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `backup_naaz_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      showNotification('Datos exportados correctamente', 'success');
+    } catch (error) {
+      console.error(error);
+      showNotification('Error al exportar datos', 'error');
+    }
+  };
+
+  const handleImportData = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!confirm('¿Estás seguro? La importación borrará todos los datos actuales y los reemplazará por los del archivo.')) {
+      e.target.value = '';
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      const backupData = JSON.parse(text);
+
+      const response = await fetch('/api/admin/restore', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(backupData)
+      });
+
+      if (response.ok) {
+        showNotification('Sistema restaurado correctamente. Recargando...', 'success');
+        setTimeout(() => window.location.reload(), 2000);
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al restaurar');
+      }
+    } catch (error) {
+      console.error(error);
+      showNotification(`Error al importar: ${error instanceof Error ? error.message : 'Formato inválido'}`, 'error');
+    }
+    e.target.value = '';
+  };
   const [searchTerm, setSearchTerm] = useState('');
   const [tipoFilter, setTipoFilter] = useState('');
   const [columnsPerRow, setColumnsPerRow] = useState(5);
@@ -266,6 +322,18 @@ export default function ManageCriaturasPage() {
           <p className={styles.subTitle} style={{ color: 'rgba(255, 255, 255, 0.7)', fontWeight: '500' }}>Crea, edita o elimina criaturas desde aquí.</p>
         </div>
         <div className={styles.headerButtons}>
+          <button className={styles.adminButton} onClick={handleExportData} style={{ background: '#4b5563' }}>
+            Exportar Backup
+          </button>
+          <label className={styles.adminButton} style={{ background: '#4b5563', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            Importar Backup
+            <input 
+              type="file" 
+              accept=".json" 
+              onChange={handleImportData} 
+              style={{ display: 'none' }} 
+            />
+          </label>
           <button className={styles.adminButton} onClick={() => router.push('/dashboard/create-criatura')}>
             Crear Nueva Criatura
           </button>
