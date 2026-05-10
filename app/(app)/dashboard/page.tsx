@@ -7,6 +7,7 @@ import styles from './dashboard.module.css';
 interface Semillero {
   id: number;
   nombre: string;
+  color?: string;
   usuario_correo: string;
 }
 
@@ -16,24 +17,28 @@ interface User {
   rol: string;
 }
 
+const COLOR_OPTIONS = [
+  { name: 'Verde', image: 'verde.png' },
+  { name: 'Azul', image: 'azul.png' },
+  { name: 'Rosa Intenso', image: 'rosa-intenso.png' },
+  { name: 'Roja', image: 'roja.png' },
+  { name: 'Amarilla', image: 'amarilla.png' },
+  { name: 'Rosa Suave', image: 'rosa-suave.png' },
+  { name: 'Verde Oscuro', image: 'verde-oscuro.png' },
+  { name: 'Azul Oscuro', image: 'azul-oscuro.png' },
+];
+
 export default function DashboardPage() {
   const router = useRouter();
   const [semilleros, setSemilleros] = useState<Semillero[]>([]);
   const [nuevoNombre, setNuevoNombre] = useState('');
   const [nuevoLimite, setNuevoLimite] = useState(5);
+  const [nuevoColor, setNuevoColor] = useState('Verde');
   const [user, setUser] = useState<User | null>(null);
-
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/logout', { method: 'POST' });
-    } catch (error) {
-      console.error('Error cerrando sesión:', error);
-    } finally {
-      router.push('/login');
-    }
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editandoId, setEditandoId] = useState<number | null>(null);
   const [editandoNombre, setEditandoNombre] = useState('');
+  const [editandoColor, setEditandoColor] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -76,7 +81,11 @@ export default function DashboardPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nombre: nuevoNombre, LimiteDeCombate: nuevoLimite }),
+        body: JSON.stringify({
+          nombre: nuevoNombre,
+          LimiteDeCombate: nuevoLimite,
+          color: nuevoColor
+        }),
       });
 
       if (response.ok) {
@@ -84,6 +93,8 @@ export default function DashboardPage() {
         setSemilleros([...semilleros, data.semillero]);
         setNuevoNombre('');
         setNuevoLimite(5);
+        setNuevoColor('Verde');
+        setIsModalOpen(false);
       }
     } catch (error) {
       console.error('Error creando semillero:', error);
@@ -93,6 +104,7 @@ export default function DashboardPage() {
   const iniciarEdicion = (semillero: Semillero) => {
     setEditandoId(semillero.id);
     setEditandoNombre(semillero.nombre);
+    setEditandoColor(semillero.color || 'Verde');
   };
 
   const guardarEdicion = async () => {
@@ -104,7 +116,10 @@ export default function DashboardPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nombre: editandoNombre }),
+        body: JSON.stringify({
+          nombre: editandoNombre,
+          color: editandoColor
+        }),
       });
 
       if (response.ok) {
@@ -114,6 +129,7 @@ export default function DashboardPage() {
         ));
         setEditandoId(null);
         setEditandoNombre('');
+        setEditandoColor('');
       }
     } catch (error) {
       console.error('Error editando semillero:', error);
@@ -123,6 +139,7 @@ export default function DashboardPage() {
   const cancelarEdicion = () => {
     setEditandoId(null);
     setEditandoNombre('');
+    setEditandoColor('');
   };
 
   const handleDeleteSemillero = async (id: number) => {
@@ -140,12 +157,28 @@ export default function DashboardPage() {
         if (editandoId === id) {
           setEditandoId(null);
           setEditandoNombre('');
+          setEditandoColor('');
         }
       } else {
         console.error('Error borrando semillero');
       }
     } catch (error) {
       console.error('Error borrando semillero:', error);
+    }
+  };
+
+  const getColorImage = (colorName: string | undefined) => {
+    const option = COLOR_OPTIONS.find(o => o.name === colorName);
+    return option ? `/semilleros/${option.image}` : '/semilleros/verde.png';
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/logout', { method: 'POST' });
+    } catch (error) {
+      console.error('Error cerrando sesión:', error);
+    } finally {
+      router.push('/login');
     }
   };
 
@@ -160,15 +193,15 @@ export default function DashboardPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <img 
-          src="https://res.cloudinary.com/dxdij0mxf/image/upload/v1778231980/image-removebg-preview_lomu1g.png" 
-          alt="Logo Mi Semillero Na'az" 
-          className={styles.headerLogo} 
+        <img
+          src="https://res.cloudinary.com/dxdij0mxf/image/upload/v1778231980/image-removebg-preview_lomu1g.png"
+          alt="Logo Mi Semillero Na'az"
+          className={styles.headerLogo}
         />
         <div className={styles.headerButtons}>
           {user?.rol === 'administrador' && (
             <button className={styles.adminButton} onClick={() => router.push('/dashboard/manage-criaturas')}>
-              Gestionar Criaturas
+              Gestionar Na'az
             </button>
           )}
           <button className={styles.logoutButton} onClick={handleLogout}>
@@ -178,99 +211,132 @@ export default function DashboardPage() {
       </div>
 
       <div className={styles.semillerosSection}>
-        <h2 className={styles.sectionTitle}>Gestión de Semilleros</h2>
-
-        <div className={styles.createForm}>
-          <input
-            type="text"
-            className={styles.createInput}
-            value={nuevoNombre}
-            onChange={(e) => setNuevoNombre(e.target.value)}
-            placeholder="Nombre del nuevo semillero"
-          />
-          <input
-            type="number"
-            className={styles.createInput}
-            value={nuevoLimite}
-            onChange={(e) => setNuevoLimite(parseInt(e.target.value) || 5)}
-            placeholder="Límite de combate"
-            min="1"
-            style={{ width: '150px' }}
-            title="Límite de combate"
-          />
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>Gestión de Semilleros</h2>
           <button
-            className={styles.createButton}
-            onClick={crearSemillero}
-            disabled={!nuevoNombre.trim()}
+            className={styles.nuevoSemilleroButton}
+            onClick={() => setIsModalOpen(true)}
           >
-            Crear Semillero
+            NUEVO SEMILLERO
           </button>
         </div>
 
-        <div className={styles.semillerosList}>
+        <div className={styles.semillerosGrid}>
           {semilleros.length === 0 ? (
             <div className={styles.emptyState}>
               <h3>No tienes semilleros aún</h3>
-              <p>Crea tu primer semillero usando el formulario de arriba.</p>
+              <p>Crea tu primer semillero usando el botón de arriba.</p>
             </div>
           ) : (
             semilleros.map((semillero) => (
-              <div key={semillero.id} className={styles.semilleroItem}>
-                {editandoId === semillero.id ? (
-                  <div className={styles.editForm}>
-                    <input
-                      type="text"
-                      className={styles.editInput}
-                      value={editandoNombre}
-                      onChange={(e) => setEditandoNombre(e.target.value)}
-                      autoFocus
-                    />
+              <div key={semillero.id} className={styles.semilleroCard}>
+                <div className={styles.semilleroIconContainer} onClick={() => router.push(`/dashboard/${semillero.id}`)}>
+                  <img
+                    src={getColorImage(semillero.color)}
+                    alt={semillero.nombre}
+                    className={styles.semilleroIcon}
+                  />
+                </div>
+                <div className={styles.semilleroCardInfo}>
+                  <div className={styles.semilleroCardName}>{semillero.nombre}</div>
+                  <div className={styles.semilleroCardActions}>
                     <button
-                      className={styles.editButton}
-                      onClick={guardarEdicion}
+                      className={styles.iconButton}
+                      onClick={(e) => { e.stopPropagation(); iniciarEdicion(semillero); }}
+                      title="Editar"
                     >
-                      Guardar
+                      ✏️
                     </button>
                     <button
-                      className={styles.cancelButton}
-                      onClick={cancelarEdicion}
+                      className={styles.iconButton}
+                      onClick={(e) => { e.stopPropagation(); handleDeleteSemillero(semillero.id); }}
+                      title="Borrar"
                     >
-                      Cancelar
+                      🗑️
                     </button>
                   </div>
-                ) : (
-                  <>
-                    <div className={styles.semilleroInfo}>
-                      <div className={styles.semilleroName}>{semillero.nombre}</div>
-                      <div className={styles.semilleroMeta}>ID: {semillero.id}</div>
-                    </div>
-                    <div className={styles.semilleroActions}>
-                      <button
-                        className={styles.editButtonAction}
-                        onClick={() => iniciarEdicion(semillero)}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        className={styles.viewButton}
-                        onClick={() => router.push(`/dashboard/${semillero.id}`)}
-                      >
-                        Ver Criaturas
-                      </button>
-                      <button
-                        className={styles.deleteButtonAction}
-                        onClick={() => handleDeleteSemillero(semillero.id)}
-                      >
-                        Borrar
-                      </button>
-                    </div>
-                  </>
-                )}
+                </div>
               </div>
             ))
           )}
         </div>
       </div>
+
+      {/* Modal para Crear/Editar Semillero */}
+      {(isModalOpen || editandoId !== null) && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContentSmall}>
+            <div className={styles.modalHeader}>
+              <h2>{editandoId !== null ? 'Editar Semillero' : 'Nuevo Semillero'}</h2>
+              <button
+                className={styles.closeButton}
+                onClick={() => { setIsModalOpen(false); cancelarEdicion(); }}
+              >
+                &times;
+              </button>
+            </div>
+            <div className={styles.modalBody}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Nombre del Semillero</label>
+                <input
+                  type="text"
+                  className={styles.input}
+                  value={editandoId !== null ? editandoNombre : nuevoNombre}
+                  onChange={(e) => editandoId !== null ? setEditandoNombre(e.target.value) : setNuevoNombre(e.target.value)}
+                  placeholder="Ej: Mi Granero"
+                />
+              </div>
+
+              {editandoId === null && (
+                <div className={styles.formGroup}>
+                  <label className={styles.label}>Límite de Combate</label>
+                  <input
+                    type="number"
+                    className={styles.input}
+                    value={nuevoLimite}
+                    onChange={(e) => setNuevoLimite(parseInt(e.target.value) || 5)}
+                    min="1"
+                  />
+                </div>
+              )}
+
+              <div className={styles.formGroup}>
+                <label className={styles.label}>Selecciona un Color</label>
+                <div className={styles.colorSelector}>
+                  {COLOR_OPTIONS.map((option) => (
+                    <div
+                      key={option.name}
+                      className={`${styles.colorOption} ${(editandoId !== null ? editandoColor : nuevoColor) === option.name ? styles.colorOptionSelected : ''
+                        }`}
+                      onClick={() => editandoId !== null ? setEditandoColor(option.name) : setNuevoColor(option.name)}
+                      title={option.name}
+                    >
+                      <img src={`/semilleros/${option.image}`} alt={option.name} />
+                      <span>{option.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className={styles.modalActions}>
+              <button
+                className={styles.cancelButton}
+                onClick={() => { setIsModalOpen(false); cancelarEdicion(); }}
+              >
+                Cancelar
+              </button>
+              <button
+                className={styles.createButton}
+                onClick={editandoId !== null ? guardarEdicion : crearSemillero}
+                disabled={editandoId !== null ? !editandoNombre.trim() : !nuevoNombre.trim()}
+              >
+                {editandoId !== null ? 'Guardar Cambios' : 'Crear Semillero'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+

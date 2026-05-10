@@ -23,6 +23,7 @@ enum usuarios_rol {
 model Semillero {
   id            Int      @id @default(autoincrement())
   nombre        String   @db.VarChar(100)
+  color         String?  @db.VarChar(50)
   LimiteDeCombate Int    @default(5)
   usuario_correo String  @db.VarChar(50)
   usuario       usuarios @relation(fields: [usuario_correo], references: [correo], onDelete: Cascade)

@@ -161,7 +161,6 @@ export default function CombatePage() {
         >
           {selectedCriaturas.length === 0 ? (
             <div style={{ textAlign: 'center', color: '#6b7280' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.5 }}>⚔️</div>
               <p style={{ fontSize: '1.2rem', margin: 0 }}>
                 La arena está vacía.<br/>¡Selecciona criaturas del selector para enviarlas al combate!
               </p>
@@ -289,7 +288,7 @@ export default function CombatePage() {
           <div className={styles.modalContent} onClick={e => e.stopPropagation()} style={{ maxWidth: '500px', width: '100%' }}>
             <div className={styles.modalHeader} style={{ padding: '1.25rem 1.5rem', backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
               <h2 style={{ fontSize: '1.4rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ fontSize: '1.5rem' }}>📋</span> {modalCriatura.nombre}
+                {modalCriatura.nombre}
               </h2>
               <button className={styles.closeButton} onClick={() => setModalCriatura(null)} style={{ fontSize: '1.75rem', lineHeight: 1 }}>×</button>
             </div>
@@ -298,7 +297,7 @@ export default function CombatePage() {
               {/* Daño Base */}
               {modalCriatura.danio_base !== undefined && modalCriatura.danio_base !== null && (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#fef2f2', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #fecaca' }}>
-                  <strong style={{ color: '#991b1b', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>⚔️ Daño Base</strong> 
+                  <strong style={{ color: '#991b1b', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>Daño Base</strong> 
                   <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ef4444' }}>{modalCriatura.danio_base}</span>
                 </div>
               )}
@@ -329,7 +328,7 @@ export default function CombatePage() {
               
               {/* Habilidades */}
               <div>
-                <strong style={{ color: '#111827', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>✨ Habilidades</strong>
+                <strong style={{ color: '#111827', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>Habilidades</strong>
                 {modalCriatura.habilidades && modalCriatura.habilidades.length > 0 ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     {modalCriatura.habilidades.map(h => (
@@ -350,7 +349,7 @@ export default function CombatePage() {
 
               {/* Depredadores */}
               <div>
-                <strong style={{ color: '#111827', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>🐺 Depredadores</strong>
+                <strong style={{ color: '#111827', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>Depredadores</strong>
                 {modalCriatura.depredadores && modalCriatura.depredadores.length > 0 ? (
                   <ul style={{ margin: 0, paddingLeft: '1.5rem', color: '#475569', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     {modalCriatura.depredadores.map(d => (

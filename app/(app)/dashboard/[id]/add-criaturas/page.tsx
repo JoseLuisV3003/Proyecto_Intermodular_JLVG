@@ -10,6 +10,7 @@ interface Criatura {
   clasificacion?: string;
   tipo?: string;
   descripcion?: string;
+  apariencia?: string;
 }
 
 interface CriaturaSeleccionada {
@@ -28,10 +29,33 @@ export default function AddCriaturasPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [columnsPerRow, setColumnsPerRow] = useState(5);
 
   useEffect(() => {
-    cargarCriaturas();
-  }, []);
+    const cargarDatos = async () => {
+      setLoading(true);
+      await Promise.all([cargarCriaturas(), cargarEstadoActual()]);
+      setLoading(false);
+    };
+    cargarDatos();
+  }, [params.id]);
+
+  const cargarEstadoActual = async () => {
+    try {
+      const response = await fetch(`/api/semilleros/${params.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        const actuales = data.semillero.criaturas.map((sc: any) => ({
+          criaturaId: sc.id,
+          cantidad: sc.cantidad,
+          criatura: sc
+        }));
+        setSeleccionadas(actuales);
+      }
+    } catch (error) {
+      console.error('Error cargando estado actual:', error);
+    }
+  };
 
   const cargarCriaturas = async () => {
     try {
@@ -60,19 +84,16 @@ export default function AddCriaturasPage() {
       if (!criatura) return prev;
 
       if (cantidad === 0) {
-        // Remover si cantidad es 0
         return prev.filter(s => s.criaturaId !== criaturaId);
       }
 
       if (existing) {
-        // Actualizar cantidad existente
         return prev.map(s =>
           s.criaturaId === criaturaId
             ? { ...s, cantidad }
             : s
         );
       } else {
-        // Agregar nueva selección
         return [...prev, { criaturaId, cantidad, criatura }];
       }
     });
@@ -130,35 +151,45 @@ export default function AddCriaturasPage() {
     );
   }
 
+  const criaturasFiltradas = criaturas.filter((criatura) => {
+    const query = searchTerm.toLowerCase().trim();
+    const matchesSearch =
+      query === '' ||
+      criatura.nombre.toLowerCase().includes(query) ||
+      criatura.clasificacion?.toLowerCase().includes(query);
+    const matchesTipo = tipoFilter === '' || criatura.tipo === tipoFilter;
+    return matchesSearch && matchesTipo;
+  });
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1>Añadir Criaturas al Semillero</h1>
-        <button className={styles.logoutButton} onClick={handleVolver}>
-          ← Volver
-        </button>
+        <h1 className={styles.headerTitle}>Gestionar Criaturas</h1>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button className={styles.createButton} onClick={handleGuardar} disabled={saving || seleccionadas.length === 0}>
+            {saving ? 'Guardando...' : `Guardar (${seleccionadas.length})`}
+          </button>
+          <button className={styles.logoutButton} onClick={handleVolver}>
+            ← Volver
+          </button>
+        </div>
       </div>
 
       <div className={styles.semillerosSection}>
-        <div className={styles.addCriaturasInfo}>
-          <p>Selecciona las criaturas que quieres añadir a tu semillero y especifica la cantidad de cada una.</p>
-          {seleccionadas.length > 0 && (
-            <div className={styles.seleccionSummary}>
-              <strong>{seleccionadas.length} criatura(s) seleccionada(s)</strong>
-            </div>
-          )}
+        <div className={styles.addCriaturasInfo} style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', backdropFilter: 'blur(10px)' }}>
+          <p style={{ color: 'rgba(255,255,255,0.9)', margin: 0 }}>Modifica la cantidad de cada criatura. Si estableces una cantidad en 0, se eliminará del semillero.</p>
         </div>
 
         <div className={styles.searchContainer}>
           <input
             type="text"
-            className={styles.searchInput}
+            className={`${styles.immersiveSearchInput} ${styles.searchBarInput}`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar criaturas por nombre o clasificación..."
+            placeholder="Buscar por nombre o clasificación..."
           />
           <select
-            className={`${styles.searchInput} ${styles.searchSelect}`}
+            className={`${styles.immersiveSearchInput} ${styles.searchSelect}`}
             value={tipoFilter}
             onChange={(e) => setTipoFilter(e.target.value)}
           >
@@ -171,99 +202,91 @@ export default function AddCriaturasPage() {
             <option value="Prohibidos">Prohibidos</option>
             <option value="Extintos">Extintos</option>
           </select>
+          <select
+            className={`${styles.immersiveSearchInput} ${styles.searchSelect}`}
+            value={columnsPerRow}
+            onChange={(e) => setColumnsPerRow(Number(e.target.value))}
+          >
+            <option value={5}>5 por fila</option>
+            <option value={8}>8 por fila</option>
+          </select>
         </div>
 
         {error && (
-          <div className={styles.error}>
+          <div className={styles.error} style={{ background: 'rgba(239, 68, 68, 0.2)', color: 'white', border: '1px solid #ef4444' }}>
             <p>{error}</p>
           </div>
         )}
 
-        {criaturas.filter((criatura) => {
-            const query = searchTerm.toLowerCase().trim();
-            const matchesSearch =
-              query === '' ||
-              criatura.nombre.toLowerCase().includes(query) ||
-              criatura.clasificacion?.toLowerCase().includes(query);
-            const matchesTipo = tipoFilter === '' || criatura.tipo === tipoFilter;
-            return matchesSearch && matchesTipo;
-          }).length === 0 ? (
+        {criaturasFiltradas.length === 0 ? (
           <div className={styles.emptyState}>
-            <h3>No se encontraron criaturas</h3>
-            <p>Prueba con otro nombre o borra el filtro.</p>
+            <h3 style={{ color: 'white' }}>No se encontraron criaturas</h3>
+            <p style={{ color: 'rgba(255,255,255,0.6)' }}>Prueba con otro nombre o borra el filtro.</p>
           </div>
         ) : (
-          <div className={styles.criaturasList}>
-            {criaturas
-              .filter((criatura) => {
-                const query = searchTerm.toLowerCase().trim();
-                const matchesSearch =
-                  query === '' ||
-                  criatura.nombre.toLowerCase().includes(query) ||
-                  criatura.clasificacion?.toLowerCase().includes(query);
-                const matchesTipo = tipoFilter === '' || criatura.tipo === tipoFilter;
-                return matchesSearch && matchesTipo;
-              })
-              .map((criatura) => (
-                <div key={criatura.id} className={styles.criaturaAddCard}>
-              <div className={styles.criaturaInfo}>
-                <h3 className={styles.criaturaName}>{criatura.nombre}</h3>
-                {criatura.clasificacion && (
-                  <p className={styles.criaturaClasificacion}>{criatura.clasificacion}</p>
-                )}
-                {criatura.descripcion && (
-                  <p className={styles.criaturaDesc}>
-                    {criatura.descripcion.length > 150
-                      ? `${criatura.descripcion.substring(0, 150)}...`
-                      : criatura.descripcion}
-                  </p>
-                )}
-              </div>
-
-              <div className={styles.cantidadControls}>
-                <label className={styles.cantidadLabel}>Cantidad:</label>
-                <div className={styles.cantidadInputGroup}>
-                  <button
-                    className={styles.cantidadButton}
-                    onClick={() => handleCantidadChange(criatura.id, getCantidadSeleccionada(criatura.id) - 1)}
-                    disabled={getCantidadSeleccionada(criatura.id) === 0}
-                  >
-                    -
-                  </button>
-                  <input
-                    type="number"
-                    min="0"
-                    value={getCantidadSeleccionada(criatura.id)}
-                    onChange={(e) => handleCantidadChange(criatura.id, parseInt(e.target.value) || 0)}
-                    className={styles.cantidadInput}
-                  />
-                  <button
-                    className={styles.cantidadButton}
-                    onClick={() => handleCantidadChange(criatura.id, getCantidadSeleccionada(criatura.id) + 1)}
-                  >
-                    +
-                  </button>
+          <div
+            className={`${styles.criaturasGrid} ${columnsPerRow === 8 ? styles.grid8 : ''}`}
+            style={{ gridTemplateColumns: `repeat(${columnsPerRow}, minmax(0, 1fr))` }}
+          >
+            {criaturasFiltradas.map((criatura) => {
+              const cantidad = getCantidadSeleccionada(criatura.id);
+              return (
+                <div
+                  key={criatura.id}
+                  className={styles.immersiveCriaturaCard}
+                  style={{ cursor: 'default' }}
+                >
+                  <div className={styles.criaturaHeader}>
+                    <h3 className={styles.immersiveCriaturaName}>{criatura.nombre}</h3>
+                  </div>
+                  {criatura.apariencia && criatura.apariencia.startsWith('http') ? (
+                    <img
+                      src={criatura.apariencia}
+                      alt={criatura.nombre}
+                      className={styles.criaturaCardImage}
+                    />
+                  ) : (
+                    <div style={{ height: '100px' }} />
+                  )}
+                  
+                  <div className={`${styles.cardQuantityControls} ${cantidad > 0 ? styles.cardQuantityControlsActive : ''}`}>
+                    <button
+                      className={styles.cardQuantityButton}
+                      onClick={() => handleCantidadChange(criatura.id, cantidad - 1)}
+                      disabled={cantidad === 0}
+                    >
+                      -
+                    </button>
+                    <span className={styles.cardQuantityValue}>{cantidad}</span>
+                    <button
+                      className={styles.cardQuantityButton}
+                      onClick={() => handleCantidadChange(criatura.id, cantidad + 1)}
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
         )}
 
-        <div className={styles.addCriaturasActions}>
+        <div className={styles.addCriaturasActions} style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '2rem' }}>
           <button
-            className={styles.cancelButton}
+            className={styles.logoutButton}
             onClick={handleVolver}
             disabled={saving}
+            style={{ background: 'rgba(255,255,255,0.1)', color: 'white' }}
           >
-            Volver sin guardar
+            Cancelar
           </button>
           <button
             className={styles.createButton}
             onClick={handleGuardar}
-            disabled={saving}
+            disabled={saving || seleccionadas.length === 0}
+            style={{ padding: '0.75rem 2.5rem' }}
           >
-            {saving ? 'Guardando...' : 'Guardar Cambios'}
+            {saving ? 'Guardando...' : `Confirmar Selección (${seleccionadas.length})`}
           </button>
         </div>
       </div>
