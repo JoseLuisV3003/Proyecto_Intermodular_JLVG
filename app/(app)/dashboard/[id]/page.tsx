@@ -18,6 +18,7 @@ interface Criatura {
   HabilidadAtaque?: number;
   HabilidadDefensa?: number;
   PuntosVitales?: number;
+  AlturaCM?: number;
   cantidad: number;
   habilidades: Array<{
     id: number;
@@ -599,7 +600,7 @@ export default function SemilleroDetailPage() {
                 </p>
               </div>
               <div className={styles.manualHeaderStats}>
-                <div>ALTURA: 80 cm</div>
+                <div>ALTURA: {selectedCriatura.AlturaCM || '--'} cm</div>
                 <div>Nº = <span className={styles.manualNumber}>{selectedCriatura.id}</span></div>
               </div>
               <button

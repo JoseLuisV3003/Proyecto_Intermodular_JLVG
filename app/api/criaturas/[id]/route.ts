@@ -35,7 +35,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       depredadores,
       HabilidadAtaque,
       HabilidadDefensa,
-      PuntosVitales
+      PuntosVitales,
+      AlturaCM
     } = body;
 
     // Validar campos requeridos
@@ -116,7 +117,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
           forma_ser: forma_ser?.trim() || null,
           HabilidadAtaque: typeof HabilidadAtaque === 'number' ? HabilidadAtaque : null,
           HabilidadDefensa: typeof HabilidadDefensa === 'number' ? HabilidadDefensa : null,
-          PuntosVitales: typeof PuntosVitales === 'number' ? PuntosVitales : null
+          PuntosVitales: typeof PuntosVitales === 'number' ? PuntosVitales : null,
+          AlturaCM: typeof AlturaCM === 'number' ? AlturaCM : null
         }
       }),
       prisma.criaturaHabilidad.deleteMany({

@@ -79,6 +79,7 @@ model Criatura {
   HabilidadAtaque  Int?
   HabilidadDefensa Int?
   PuntosVitales    Int?
+  AlturaCM         Int?
 
   habilidades   CriaturaHabilidad[]
   depredadores  CriaturaDepredador[]

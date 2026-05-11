@@ -14,6 +14,7 @@ export default function CreateCriaturaPage() {
     HabilidadAtaque: '',
     HabilidadDefensa: '',
     PuntosVitales: '',
+    AlturaCM: '',
     germinacion: '',
     descripcion: '',
     apariencia: '',
@@ -73,6 +74,7 @@ export default function CreateCriaturaPage() {
         HabilidadAtaque: formData.HabilidadAtaque ? parseInt(formData.HabilidadAtaque) : null,
         HabilidadDefensa: formData.HabilidadDefensa ? parseInt(formData.HabilidadDefensa) : null,
         PuntosVitales: formData.PuntosVitales ? parseInt(formData.PuntosVitales) : null,
+        AlturaCM: formData.AlturaCM ? parseInt(formData.AlturaCM) : null,
         habilidades: habilidades
           .filter(habilidad => habilidad.nombre.trim())
           .map(habilidad => ({
@@ -221,6 +223,18 @@ export default function CreateCriaturaPage() {
                 name="PuntosVitales"
                 className={styles.input}
                 value={formData.PuntosVitales}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label htmlFor="AlturaCM" className={styles.label}>Altura (cm)</label>
+              <input
+                type="number"
+                id="AlturaCM"
+                name="AlturaCM"
+                className={styles.input}
+                value={formData.AlturaCM}
                 onChange={handleChange}
               />
             </div>

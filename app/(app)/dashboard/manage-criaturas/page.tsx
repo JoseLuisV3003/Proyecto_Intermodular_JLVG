@@ -24,6 +24,7 @@ interface Criatura {
   HabilidadAtaque?: number;
   HabilidadDefensa?: number;
   PuntosVitales?: number;
+  AlturaCM?: number;
   germinacion?: string;
   descripcion?: string;
   apariencia?: string;
@@ -221,6 +222,7 @@ export default function ManageCriaturasPage() {
         HabilidadAtaque: typeof editForm.HabilidadAtaque === 'number' ? editForm.HabilidadAtaque : null,
         HabilidadDefensa: typeof editForm.HabilidadDefensa === 'number' ? editForm.HabilidadDefensa : null,
         PuntosVitales: typeof editForm.PuntosVitales === 'number' ? editForm.PuntosVitales : null,
+        AlturaCM: typeof editForm.AlturaCM === 'number' ? editForm.AlturaCM : null,
         habilidades: (editForm.habilidades || [])
           .filter((habilidad) => habilidad.nombre?.trim())
           .map((habilidad) => ({
@@ -519,6 +521,16 @@ export default function ManageCriaturasPage() {
                       className={styles.input}
                       value={editForm.PuntosVitales || ''}
                       onChange={(e) => handleInputChange('PuntosVitales', parseInt(e.target.value) || 0)}
+                    />
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Altura (cm)</label>
+                    <input
+                      type="number"
+                      className={styles.input}
+                      value={editForm.AlturaCM || ''}
+                      onChange={(e) => handleInputChange('AlturaCM', parseInt(e.target.value) || 0)}
                     />
                   </div>
 

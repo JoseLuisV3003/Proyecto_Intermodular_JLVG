@@ -71,6 +71,7 @@ export async function GET(
         HabilidadAtaque: sc.criatura.HabilidadAtaque,
         HabilidadDefensa: sc.criatura.HabilidadDefensa,
         PuntosVitales: sc.criatura.PuntosVitales,
+        AlturaCM: sc.criatura.AlturaCM,
         germinacion: sc.criatura.germinacion,
         descripcion: sc.criatura.descripcion,
         apariencia: sc.criatura.apariencia,
