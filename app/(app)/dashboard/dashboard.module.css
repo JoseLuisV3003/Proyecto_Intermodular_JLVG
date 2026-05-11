@@ -58,15 +58,19 @@
 }
 
 .logoutButton {
-  padding: 0.5rem 1rem;
+  padding: 0.7rem 1.4rem;
   background-color: #ef4444;
   color: white;
   border: none;
-  border-radius: 0.375rem;
+  border-radius: 0.5rem;
   cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
-  transition: background-color 0.2s;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px;
 }
 
 .logoutButton:hover {
@@ -84,10 +88,14 @@
 }
 
 .sectionTitle {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.8rem;
+  font-weight: 800;
   color: white;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  letter-spacing: 0.02em;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+  position: relative;
+  display: inline-block;
 }
 
 /* Create semillero form */
@@ -287,22 +295,31 @@
   background-color: #d97706;
 }
 
-/* Empty state */
 .emptyState {
   text-align: center;
-  padding: 3rem 1rem;
-  color: #6b7280;
+  padding: 6rem 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .emptyState h3 {
-  font-size: 1.25rem;
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: white;
+  margin: 0;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+  letter-spacing: 0.02em;
 }
 
 .emptyState p {
-  font-size: 1rem;
+  font-size: 1.2rem;
+  margin: 0 0 1.5rem 0;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+  opacity: 0.9;
 }
 
 /* Loading state */
@@ -792,15 +809,19 @@
 }
 
 .adminButton {
-  padding: 0.75rem 1.5rem;
+  padding: 0.7rem 1.4rem;
   background-color: #f59e0b;
   color: white;
   border: none;
-  border-radius: 0.375rem;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px;
 }
 
 .adminButton:hover {
@@ -1434,6 +1455,12 @@
   background: #e5e7eb;
 }
 
+.iconButtonImg {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
 /* Color Selector */
 .colorSelector {
   display: grid;
@@ -1625,7 +1652,7 @@
   background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 75%) !important;
   border: none !important;
   border-radius: 50% !important;
-  padding: 1.5rem !important;
+  padding: clamp(0.5rem, 1.5vw, 1.25rem) !important;
   cursor: pointer;
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   width: 100%;
@@ -1633,6 +1660,7 @@
   aspect-ratio: 1 / 1;
   justify-content: center;
   align-items: center;
+  overflow: visible !important;
 }
 
 .immersiveCriaturaCard:hover {
@@ -1647,37 +1675,42 @@
 
 .immersiveCriaturaName {
   margin: 0;
-  font-size: clamp(0.9rem, 1.2vw, 1.2rem) !important;
+  font-size: clamp(0.7rem, 1vw, 1.1rem) !important;
   font-weight: 800 !important;
   color: white !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6) !important;
   text-align: center;
   z-index: 5;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
+  width: 90%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .immersiveBadge {
   position: absolute;
-  top: 5%;
-  right: 5%;
+  top: 0;
+  right: 0;
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
   color: white !important;
-  padding: 0.25rem 0.65rem !important;
+  padding: 0.2rem 0.5rem !important;
   border-radius: 20px !important;
-  font-size: 0.85rem !important;
+  font-size: clamp(0.65rem, 0.8vw, 0.85rem) !important;
   font-weight: 900 !important;
   z-index: 10;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  transform: translate(20%, -20%);
 }
 
 .immersiveClasificacion {
   color: white !important;
-  font-size: 0.7rem !important;
+  font-size: clamp(0.55rem, 0.7vw, 0.75rem) !important;
   font-weight: 700 !important;
-  margin-top: 0.75rem;
-  padding: 0.2rem 0.75rem;
-  background: rgba(255, 255, 255, 0.1) !important;
+  margin-top: 0.4rem;
+  padding: 0.15rem 0.5rem;
+  background: rgba(0, 0, 0, 0.3) !important;
   backdrop-filter: blur(8px);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
@@ -1685,8 +1718,27 @@
   font-style: normal !important;
   z-index: 5;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  max-width: 90%;
+  max-width: 95%;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.grid8 .immersiveCriaturaCard {
+  padding: 0.4rem !important;
+}
+
+.grid8 .immersiveCriaturaName {
+  font-size: 0.65rem !important;
+}
+
+.grid8 .immersiveClasificacion {
+  display: none; /* Hide classification in high density grid to save space */
+}
+
+.grid8 .criaturaCardImage {
+  transform: scale(0.9); /* Slightly smaller image in high density */
 }
 
 .searchBarInput {
@@ -2030,5 +2082,218 @@
 
   to {
     opacity: 0;
+  }
+}
+
+/* Selection Bar Styles */
+.selectionBar {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+  padding: 1.5rem 2rem;
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  z-index: 900;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  max-width: 90vw;
+  width: fit-content;
+  min-width: 400px;
+}
+
+.selectionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3rem;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translate(-50%, 100%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+/* --- RESPONSIVE MOBILE ADJUSTMENTS --- */
+@media (max-width: 768px) {
+  /* General Container */
+  .container {
+    padding: 1rem 0.75rem !important;
+  }
+
+  /* Header */
+  .header {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  .headerTitle {
+    font-size: 1.8rem !important;
+    -webkit-text-stroke: 1px white !important;
+    text-align: center !important;
+  }
+
+  .headerButtons {
+    width: 100% !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+  }
+
+  .logoutButton, .adminButton {
+    flex: 1 !important;
+    min-width: 120px !important;
+    font-size: 0.8rem !important;
+    padding: 0.6rem 0.5rem !important;
+  }
+
+  /* Section Headers */
+  .sectionHeader {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 1.25rem !important;
+    text-align: center !important;
+  }
+
+  .nuevoSemilleroButton {
+    width: 100% !important;
+    max-width: 300px !important;
+  }
+
+  /* Search & Filters */
+  .searchContainer {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    padding: 0 0.5rem !important;
+  }
+
+  .searchBarInput {
+    min-width: 100% !important;
+  }
+
+  .searchSelect {
+    width: 100% !important;
+  }
+
+  /* Grids */
+  .semillerosGrid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
+    gap: 1rem !important;
+    padding: 0.5rem !important;
+  }
+
+  .criaturasGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 1rem !important;
+  }
+
+  .semilleroIconContainer {
+    width: 110px !important;
+    height: 110px !important;
+  }
+
+  /* Manual Modal */
+  .manualModal {
+    padding: 1rem !important;
+  }
+
+  .manualHeader {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    padding: 1rem 1rem 0.5rem !important;
+    margin: 0 1rem 1rem !important;
+    gap: 1rem !important;
+  }
+
+  .manualTitle {
+    font-size: 2rem !important;
+    -webkit-text-stroke: 0.8px black !important;
+  }
+
+  .manualHeaderStats {
+    text-align: center !important;
+    font-size: 1.2rem !important;
+  }
+
+  .manualNumber {
+    font-size: 1.8rem !important;
+  }
+
+  .manualBody {
+    padding: 1rem 1.5rem 2rem !important;
+  }
+
+  .manualImage {
+    max-width: 180px !important;
+  }
+
+  .manualStatsGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Immersive Cards */
+  .immersiveCriaturaCard {
+    padding: 0.5rem !important;
+  }
+
+  .immersiveCriaturaName {
+    font-size: 0.75rem !important;
+  }
+
+  .immersiveBadge {
+    font-size: 0.65rem !important;
+    padding: 0.15rem 0.4rem !important;
+  }
+
+  /* Selection Bar (Barra de formación) */
+  .selectionBar {
+    width: 95vw !important;
+    min-width: 0 !important;
+    padding: 1rem !important;
+    bottom: 1rem !important;
+  }
+
+  .selectionRow {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    align-items: center !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .headerTitle {
+    font-size: 1.4rem !important;
+  }
+
+  .semillerosGrid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .criaturasGrid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5rem !important;
+  }
+
+  .semilleroIconContainer {
+    width: 90px !important;
+    height: 90px !important;
+  }
+
+  .manualTitle {
+    font-size: 1.6rem !important;
   }
 }

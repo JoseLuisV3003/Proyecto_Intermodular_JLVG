@@ -775,28 +775,9 @@ export default function SemilleroDetailPage() {
       )}
       {/* Barra de Selección de Preset */}
       {presetSelection.length > 0 && (
-        <div style={{
-          position: 'fixed',
-          bottom: '2rem',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          background: 'rgba(15, 23, 42, 0.95)',
-          backdropFilter: 'blur(12px)',
-          padding: '1.5rem 2rem',
-          borderRadius: '24px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '1.25rem',
-          zIndex: 900,
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          animation: 'slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          maxWidth: '90vw',
-          width: 'fit-content',
-          minWidth: '400px'
-        }}>
+        <div className={styles.selectionBar}>
           {/* Fila Superior: Contador y Acciones */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '3rem' }}>
+          <div className={styles.selectionRow}>
             <div style={{ color: 'white', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <div style={{ background: '#3b82f6', color: 'white', padding: '0.25rem 0.75rem', borderRadius: '12px', fontWeight: '800', fontSize: '1.1rem' }}>
                 {presetSelection.length} / {semillero.LimiteDeCombate}

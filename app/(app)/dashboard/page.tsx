@@ -226,14 +226,14 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        <div className={styles.semillerosGrid}>
-          {semilleros.length === 0 ? (
-            <div className={styles.emptyState}>
-              <h3>No tienes semilleros aún</h3>
-              <p>Crea tu primer semillero usando el botón de arriba.</p>
-            </div>
-          ) : (
-            semilleros.map((semillero) => (
+        {semilleros.length === 0 ? (
+          <div className={styles.emptyState}>
+            <h3>No tienes semilleros aún</h3>
+            <p>Crea tu primer semillero usando el botón de arriba.</p>
+          </div>
+        ) : (
+          <div className={styles.semillerosGrid}>
+            {semilleros.map((semillero) => (
               <div key={semillero.id} className={styles.semilleroCard}>
                 <div className={styles.semilleroIconContainer} onClick={() => router.push(`/dashboard/${semillero.id}`)}>
                   <img
@@ -250,21 +250,21 @@ export default function DashboardPage() {
                       onClick={(e) => { e.stopPropagation(); iniciarEdicion(semillero); }}
                       title="Editar"
                     >
-                      ✏️
+                      <img src="/icons/pluma.svg" alt="Editar" className={styles.iconButtonImg} />
                     </button>
                     <button
                       className={styles.iconButton}
                       onClick={(e) => { e.stopPropagation(); handleDeleteSemillero(semillero.id); }}
                       title="Borrar"
                     >
-                      🗑️
+                      <img src="/icons/delete.svg" alt="Borrar" className={styles.iconButtonImg} />
                     </button>
                   </div>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Modal para Crear/Editar Semillero */}
