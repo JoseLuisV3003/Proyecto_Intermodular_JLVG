@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../lib/prisma';
+import { isAdmin } from '../../../lib/auth';
 
 export async function POST(request: NextRequest) {
+  if (!await isAdmin(request)) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+  }
   try {
     const backupData = await request.json();
 

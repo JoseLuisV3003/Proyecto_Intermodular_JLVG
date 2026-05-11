@@ -1,24 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../lib/prisma';
+import { isAdmin } from '../../../lib/auth';
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    // Verificar que el usuario sea administrador
-    const userSession = request.cookies.get('userSession');
-    if (!userSession) {
-      return NextResponse.json(
-        { error: 'No autorizado' },
-        { status: 401 }
-      );
-    }
-
-    const userEmail = userSession.value;
-    const user = await prisma.usuarios.findUnique({
-      where: { correo: userEmail },
-      select: { rol: true }
-    });
-
-    if (!user || user.rol !== 'administrador') {
+    if (!await isAdmin(request)) {
       return NextResponse.json(
         { error: 'Solo administradores pueden editar criaturas' },
         { status: 403 }
@@ -186,22 +172,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    // Verificar que el usuario sea administrador
-    const userSession = request.cookies.get('userSession');
-    if (!userSession) {
-      return NextResponse.json(
-        { error: 'No autorizado' },
-        { status: 401 }
-      );
-    }
-
-    const userEmail = userSession.value;
-    const user = await prisma.usuarios.findUnique({
-      where: { correo: userEmail },
-      select: { rol: true }
-    });
-
-    if (!user || user.rol !== 'administrador') {
+    if (!await isAdmin(request)) {
       return NextResponse.json(
         { error: 'Solo administradores pueden eliminar criaturas' },
         { status: 403 }

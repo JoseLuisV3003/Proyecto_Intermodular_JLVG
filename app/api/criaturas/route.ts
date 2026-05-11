@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../lib/prisma';
+import { isAdmin } from '../../lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -65,22 +66,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Verificar que el usuario sea administrador
-    const userSession = request.cookies.get('userSession');
-    if (!userSession) {
-      return NextResponse.json(
-        { error: 'No autorizado' },
-        { status: 401 }
-      );
-    }
-
-    const userEmail = userSession.value;
-    const user = await prisma.usuarios.findUnique({
-      where: { correo: userEmail },
-      select: { rol: true }
-    });
-
-    if (!user || user.rol !== 'administrador') {
+    if (!await isAdmin(request)) {
       return NextResponse.json(
         { error: 'Solo administradores pueden crear criaturas' },
         { status: 403 }
