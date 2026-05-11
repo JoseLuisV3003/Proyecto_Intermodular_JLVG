@@ -18,14 +18,14 @@ interface User {
 }
 
 const COLOR_OPTIONS = [
-  { name: 'Verde', image: 'verde.png' },
-  { name: 'Azul', image: 'azul.png' },
-  { name: 'Rosa Intenso', image: 'rosa-intenso.png' },
-  { name: 'Roja', image: 'roja.png' },
-  { name: 'Amarilla', image: 'amarilla.png' },
-  { name: 'Rosa Suave', image: 'rosa-suave.png' },
-  { name: 'Verde Oscuro', image: 'verde-oscuro.png' },
-  { name: 'Azul Oscuro', image: 'azul-oscuro.png' },
+  { name: 'Verde', image: 'verde.svg' },
+  { name: 'Azul', image: 'azul.svg' },
+  { name: 'Rosa Intenso', image: 'rosa-intenso.svg' },
+  { name: 'Roja', image: 'roja.svg' },
+  { name: 'Amarilla', image: 'amarilla.svg' },
+  { name: 'Rosa Suave', image: 'rosa-suave.svg' },
+  { name: 'Verde Oscuro', image: 'verde-oscuro.svg' },
+  { name: 'Azul Oscuro', image: 'azul-oscuro.svg' },
 ];
 
 export default function DashboardPage() {
