@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model usuarios {
+  correo   String       @id @db.VarChar(50)
+  usuario  String       @default("") @db.VarChar(20)
+  password String       @db.VarChar(255)
+  rol      usuarios_rol @default(usuario)
+  semilleros Semillero[]
+}
+
+enum usuarios_rol {
+  usuario
+  administrador
+}
+
+model Semillero {
+  id            Int      @id @default(autoincrement())
+  nombre        String   @db.VarChar(100)
+  color         String?  @db.VarChar(50)
+  LimiteDeCombate Int    @default(5)
+  usuario_correo String  @db.VarChar(50)
+  usuario       usuarios @relation(fields: [usuario_correo], references: [correo], onDelete: Cascade)
+  criaturas     SemilleroCriatura[]
+  presets       Preset[]
+
+  @@map("semilleros")
+}
+
+model Preset {
+  id           Int      @id @default(autoincrement())
+  nombre       String   @db.VarChar(100)
+  semillero_id Int
+  semillero    Semillero @relation(fields: [semillero_id], references: [id], onDelete: Cascade)
+  criaturas    PresetCriatura[]
+
+  @@map("presets")
+}
+
+model PresetCriatura {
+  preset_id    Int
+  criatura_id  Int
+  cantidad     Int      @default(1)
+
+  preset       Preset   @relation(fields: [preset_id], references: [id], onDelete: Cascade)
+  criatura     Criatura @relation(fields: [criatura_id], references: [id], onDelete: Cascade)
+
+  @@id([preset_id, criatura_id])
+  @@map("preset_criaturas")
+}
+
+enum CriaturaTipo {
+  Normal
+  Subtipo
+  Legendarios
+  Venerables
+  Desterrados
+  Prohibidos
+  Extintos
+}
+
+model Criatura {
+  id            Int      @id @default(autoincrement())
+  nombre        String   @db.VarChar(100)
+  clasificacion String?  @db.VarChar(100)
+  tipo          CriaturaTipo? @default(Normal)
+  danio_base    Int?
+  germinacion   String?  @db.Text
+  descripcion   String?  @db.Text
+  apariencia    String?  @db.Text
+  observaciones String?  @db.Text
+  forma_ser     String?  @db.Text
+  HabilidadAtaque  Int?
+  HabilidadDefensa Int?
+  PuntosVitales    Int?
+
+  habilidades   CriaturaHabilidad[]
+  depredadores  CriaturaDepredador[]
+  semilleros    SemilleroCriatura[]
+  presets       PresetCriatura[]
+
+  @@map("criaturas")
+}
+
+model Habilidad {
+  id          Int      @id @default(autoincrement())
+  nombre      String   @db.VarChar(100)
+  descripcion String?  @db.Text
+
+  criaturas   CriaturaHabilidad[]
+
+  @@map("habilidades")
+}
+
+model CriaturaHabilidad {
+  criatura_id  Int
+  habilidad_id Int
+
+  criatura  Criatura  @relation(fields: [criatura_id], references: [id], onDelete: Cascade)
+  habilidad Habilidad @relation(fields: [habilidad_id], references: [id], onDelete: Cascade)
+
+  @@id([criatura_id, habilidad_id])
+  @@map("criatura_habilidades")
+}
+
+model CriaturaDepredador {
+  id           Int      @id @default(autoincrement())
+  criatura_id  Int
+  descripcion  String?  @db.Text
+
+  criatura     Criatura @relation(fields: [criatura_id], references: [id], onDelete: Cascade)
+
+  @@map("criatura_depredadores")
+}
+
+model SemilleroCriatura {
+  semillero_id Int
+  criatura_id  Int
+  cantidad     Int      @default(1)
+
+  semillero    Semillero @relation(fields: [semillero_id], references: [id], onDelete: Cascade)
+  criatura     Criatura  @relation(fields: [criatura_id], references: [id], onDelete: Cascade)
+
+  @@id([semillero_id, criatura_id])
+  @@map("semillero_criaturas")
+}
