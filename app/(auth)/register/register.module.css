@@ -80,6 +80,37 @@
   color: #576a86;
 }
 
+.passwordWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.passwordInput {
+  padding-right: 2.5rem !important;
+}
+
+.eyeButton {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  transition: color 0.2s;
+  z-index: 10;
+}
+
+.eyeButton:hover {
+  color: #4b5563;
+}
+
+
 .input:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1), 0 0 0 3px rgb(99, 102, 241);

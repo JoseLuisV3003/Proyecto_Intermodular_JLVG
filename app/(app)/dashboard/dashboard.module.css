@@ -2297,3 +2297,97 @@
     font-size: 1.6rem !important;
   }
 }
+
+/* Delete Confirmation Dropdown */
+.deleteConfirmDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  z-index: 1000;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  margin-top: 0.75rem;
+  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.deleteConfirmTitle {
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.deleteConfirmButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.confirmDeleteBtn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.confirmDeleteBtn:hover {
+  background: #dc2626;
+  transform: scale(1.03);
+}
+
+.cancelDeleteBtn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelDeleteBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.settingsButton {
+  padding: 0.7rem;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.settingsButton:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+

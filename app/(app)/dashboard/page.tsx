@@ -40,7 +40,11 @@ export default function DashboardPage() {
   const [editandoNombre, setEditandoNombre] = useState('');
   const [editandoColor, setEditandoColor] = useState('');
   const [loading, setLoading] = useState(true);
+  const [confirmandoBorradoId, setConfirmandoBorradoId] = useState<number | null>(null);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
+
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
     setNotification({ message, type });
@@ -148,8 +152,11 @@ export default function DashboardPage() {
     setEditandoColor('');
   };
 
-  const handleDeleteSemillero = async (id: number) => {
-    // Eliminación directa por petición del usuario
+  const handleDeleteSemillero = (id: number) => {
+    setConfirmandoBorradoId(id);
+  };
+
+  const confirmarEliminacion = async (id: number) => {
     try {
       const response = await fetch(`/api/semilleros/${id}`, {
         method: 'DELETE',
@@ -158,6 +165,7 @@ export default function DashboardPage() {
       if (response.ok) {
         setSemilleros(semilleros.filter((semillero) => semillero.id !== id));
         showNotification('Semillero eliminado correctamente.', 'success');
+        setConfirmandoBorradoId(null);
         if (editandoId === id) {
           setEditandoId(null);
           setEditandoNombre('');
@@ -171,6 +179,11 @@ export default function DashboardPage() {
       showNotification('Error de conexión.', 'error');
     }
   };
+
+  const cancelarEliminacion = () => {
+    setConfirmandoBorradoId(null);
+  };
+
 
   const getColorImage = (colorName: string | undefined) => {
     const option = COLOR_OPTIONS.find(o => o.name === colorName);
@@ -186,6 +199,31 @@ export default function DashboardPage() {
       router.push('/login');
     }
   };
+
+  const handleDeleteAccount = async () => {
+    const confirmed = window.confirm("¿ESTÁS COMPLETAMENTE SEGURO? Esta acción es IRREVERSIBLE. Se borrarán todos tus semilleros, formaciones y datos de usuario permanentemente.");
+    
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch('/api/user', {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        showNotification('Cuenta eliminada correctamente. Adiós...', 'success');
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+      } else {
+        showNotification('Error al eliminar la cuenta.', 'error');
+      }
+    } catch (error) {
+      console.error('Error eliminando cuenta:', error);
+      showNotification('Error de conexión.', 'error');
+    }
+  };
+
 
   if (loading) {
     return (
@@ -204,6 +242,16 @@ export default function DashboardPage() {
           className={styles.headerLogo}
         />
         <div className={styles.headerButtons}>
+          <button 
+            className={styles.settingsButton} 
+            onClick={() => setIsSettingsModalOpen(true)}
+            title="Ajustes de Usuario"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </button>
           {user?.rol === 'administrador' && (
             <button className={styles.adminButton} onClick={() => router.push('/dashboard/manage-criaturas')}>
               Gestionar Na'az
@@ -213,6 +261,7 @@ export default function DashboardPage() {
             Cerrar sesión
           </button>
         </div>
+
       </div>
 
       <div className={styles.semillerosSection}>
@@ -252,13 +301,38 @@ export default function DashboardPage() {
                     >
                       <img src="/icons/pluma.svg" alt="Editar" className={styles.iconButtonImg} />
                     </button>
-                    <button
+                    <div
                       className={styles.iconButton}
                       onClick={(e) => { e.stopPropagation(); handleDeleteSemillero(semillero.id); }}
                       title="Borrar"
+                      style={{ position: 'relative' }}
+                      role="button"
+                      tabIndex={0}
                     >
                       <img src="/icons/delete.svg" alt="Borrar" className={styles.iconButtonImg} />
-                    </button>
+                      
+                      {confirmandoBorradoId === semillero.id && (
+                        <div className={styles.deleteConfirmDropdown} onClick={(e) => e.stopPropagation()}>
+                          <p className={styles.deleteConfirmTitle}>¿Eliminar semillero?</p>
+                          <div className={styles.deleteConfirmButtons}>
+                            <button 
+                              className={styles.confirmDeleteBtn}
+                              onClick={() => confirmarEliminacion(semillero.id)}
+                            >
+                              Si, estoy seguro
+                            </button>
+                            <button 
+                              className={styles.cancelDeleteBtn}
+                              onClick={cancelarEliminacion}
+                            >
+                              Mejor no...
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+
                   </div>
                 </div>
               </div>
@@ -341,7 +415,52 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Modal de Ajustes de Usuario */}
+      {isSettingsModalOpen && (
+        <div className={styles.modernModalOverlay} onClick={() => setIsSettingsModalOpen(false)}>
+          <div className={styles.modernModalContent} style={{ maxWidth: '500px' }} onClick={e => e.stopPropagation()}>
+            <div className={styles.modernModalHeader}>
+              <h2>Ajustes de Usuario</h2>
+              <button className={styles.modernCloseButton} onClick={() => setIsSettingsModalOpen(false)}>×</button>
+            </div>
+            <div className={styles.modernModalBody}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div>
+                  <h3 style={{ margin: '0 0 0.5rem 0', color: '#1e293b' }}>Información de la cuenta</h3>
+                  <p style={{ margin: 0, color: '#64748b' }}><strong>Usuario:</strong> {user?.usuario}</p>
+                  <p style={{ margin: 0, color: '#64748b' }}><strong>Correo:</strong> {user?.correo}</p>
+                  <p style={{ margin: 0, color: '#64748b' }}><strong>Rango:</strong> {user?.rol}</p>
+                </div>
+                
+                <hr style={{ border: '0', borderTop: '1px solid #e2e8f0', margin: '0.5rem 0' }} />
+                
+                <div>
+                  <h3 style={{ margin: '0 0 0.5rem 0', color: '#ef4444' }}>Zona de Peligro</h3>
+                  <p style={{ margin: '0 0 1rem 0', color: '#64748b', fontSize: '0.9rem' }}>
+                    Al eliminar tu cuenta, se perderán todos tus semilleros y Na'az capturados de forma permanente.
+                  </p>
+                  <button 
+                    className={styles.confirmDeleteBtn} 
+                    style={{ width: '100%', padding: '0.8rem' }}
+                    onClick={handleDeleteAccount}
+                  >
+                    Eliminar mi cuenta definitivamente
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className={styles.modalActions}>
+              <button className={styles.cancelButton} onClick={() => setIsSettingsModalOpen(false)}>
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Sistema de Toasts */}
+
       {notification && (
         <div className={styles.toastContainer}>
           <div className={`${styles.toast} ${notification.type === 'success' ? styles.toastSuccess : styles.toastError}`}>
