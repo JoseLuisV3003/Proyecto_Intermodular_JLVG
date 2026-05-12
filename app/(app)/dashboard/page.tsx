@@ -430,8 +430,8 @@ export default function DashboardPage() {
                   <h3 style={{ margin: '0 0 0.5rem 0', color: '#1e293b' }}>Información de la cuenta</h3>
                   <p style={{ margin: 0, color: '#64748b' }}><strong>Usuario:</strong> {user?.usuario}</p>
                   <p style={{ margin: 0, color: '#64748b' }}><strong>Correo:</strong> {user?.correo}</p>
-                  <p style={{ margin: 0, color: '#64748b' }}><strong>Rango:</strong> {user?.rol}</p>
                 </div>
+
                 
                 <hr style={{ border: '0', borderTop: '1px solid #e2e8f0', margin: '0.5rem 0' }} />
                 
