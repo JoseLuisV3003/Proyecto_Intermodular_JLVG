@@ -129,7 +129,18 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { nombre, LimiteDeCombate, LimiteMaximo, color } = body;
+    const { nombre, LimiteDeCombate, color, LimiteMaximo } = body;
+
+    // Validar nombre si se proporciona
+    if (nombre) {
+      const nameRegex = /^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]*$/;
+      if (nombre.length > 25 || !nameRegex.test(nombre)) {
+        return NextResponse.json(
+          { error: 'Nombre inválido: máx 25 caracteres, sin símbolos' },
+          { status: 400 }
+        );
+      }
+    }
 
     if (!nombre && LimiteDeCombate === undefined && LimiteMaximo === undefined && !color) {
       return NextResponse.json(

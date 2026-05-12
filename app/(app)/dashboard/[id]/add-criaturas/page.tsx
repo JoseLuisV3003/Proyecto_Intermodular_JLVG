@@ -206,7 +206,7 @@ export default function AddCriaturasPage() {
             type="text"
             className={`${styles.immersiveSearchInput} ${styles.searchBarInput}`}
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value.replace(/[^a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]/g, ''))}
             placeholder="Buscar por nombre o clasificación..."
           />
           <select

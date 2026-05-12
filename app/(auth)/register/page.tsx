@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import styles from './register.module.css';
+import { validatePassword, validateEmail } from '../../lib/validation';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -14,8 +15,13 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
-
   const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
+
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,8 +32,20 @@ export default function RegisterPage() {
       return;
     }
 
+    const emailValidation = validateEmail(email.trim());
+    if (!emailValidation.isValid) {
+      setError(emailValidation.message || 'Correo electrónico inválido');
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden');
+      return;
+    }
+
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      setError(passwordValidation.message || 'La contraseña no cumple los requisitos');
       return;
     }
 
@@ -51,10 +69,18 @@ export default function RegisterPage() {
       if (!response.ok) {
         setError(data.error || 'Error al crear el usuario');
         setLoading(false);
+        // Borrar campos automáticamente en caso de error
+        setUsername('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
         return;
       }
 
-      router.push('/login');
+      showNotification('¡Cuenta creada con éxito! Redirigiendo...', 'success');
+      setTimeout(() => {
+        router.push('/login');
+      }, 2000);
     } catch (err) {
       setError('Error al conectar con el servidor');
       setLoading(false);
@@ -66,10 +92,10 @@ export default function RegisterPage() {
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.logoContainer}>
-          <img 
-            src="https://res.cloudinary.com/dxdij0mxf/image/upload/v1778231980/image-removebg-preview_lomu1g.png" 
-            alt="Logo Mi Semillero Na'az" 
-            className={styles.logoImage} 
+          <img
+            src="https://res.cloudinary.com/dxdij0mxf/image/upload/v1778231980/image-removebg-preview_lomu1g.png"
+            alt="Logo Mi Semillero Na'az"
+            className={styles.logoImage}
           />
         </div>
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -191,6 +217,16 @@ export default function RegisterPage() {
           </Link>
         </div>
       </div>
+
+      {/* Sistema de Toasts */}
+      {notification && (
+        <div className={styles.toastContainer}>
+          <div className={`${styles.toast} ${notification.type === 'success' ? styles.toastSuccess : styles.toastError}`}>
+            <span style={{ fontSize: '1.2rem' }}>{notification.type === 'success' ? '✓' : '✕'}</span>
+            {notification.message}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

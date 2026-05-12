@@ -498,7 +498,7 @@ export default function CombatePage() {
                   className={styles.createInput}
                   placeholder="Ej: Batallón de Vanguardia"
                   value={presetName}
-                  onChange={(e) => setPresetName(e.target.value)}
+                  onChange={(e) => setPresetName(e.target.value.replace(/[^a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]/g, '').slice(0, 25))}
                   autoFocus
                   onKeyDown={(e) => e.key === 'Enter' && handleGuardarPreset()}
                   style={{ width: '100%', padding: '0.8rem', borderRadius: '12px' }}

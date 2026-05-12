@@ -1,5 +1,6 @@
 import { prisma } from '../../lib/prisma';
 import bcrypt from 'bcrypt';
+import { validatePassword, validateEmail } from '../../lib/validation';
 
 export async function GET() {
   try {
@@ -26,6 +27,36 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { correo, usuario, password, rol } = body;
+
+    // Validar formato del correo
+    const emailValidation = validateEmail(correo);
+    if (!emailValidation.isValid) {
+      return Response.json(
+        { error: emailValidation.message },
+        { status: 400 }
+      );
+    }
+
+    // Validar complejidad de la contraseña
+    const validation = validatePassword(password);
+    if (!validation.isValid) {
+      return Response.json(
+        { error: validation.message },
+        { status: 400 }
+      );
+    }
+
+    // Verificar si el usuario ya existe
+    const existingUser = await prisma.usuarios.findUnique({
+      where: { correo }
+    });
+
+    if (existingUser) {
+      return Response.json(
+        { error: 'Ya existe una cuenta vinculada a este correo electrónico' },
+        { status: 409 }
+      );
+    }
 
     // Hash the password before storing
     const hashedPassword = await bcrypt.hash(password, 10);

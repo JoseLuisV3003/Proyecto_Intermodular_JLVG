@@ -43,9 +43,21 @@ export default function DashboardPage() {
   const [editandoNombre, setEditandoNombre] = useState('');
   const [editandoColor, setEditandoColor] = useState('');
   const [editandoLimiteMaximo, setEditandoLimiteMaximo] = useState(20);
+
+  const handleNameChange = (value: string, setter: (val: string) => void) => {
+    // Solo permitir letras, números y espacios, máximo 25 caracteres
+    const cleaned = value.replace(/[^a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]/g, '').slice(0, 25);
+    setter(cleaned);
+  };
   const [loading, setLoading] = useState(true);
   const [confirmandoBorradoId, setConfirmandoBorradoId] = useState<number | null>(null);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
+  const [showUsernameChange, setShowUsernameChange] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
+  const [passwords, setPasswords] = useState({ current: '', new: '', confirm: '' });
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [changingUsername, setChangingUsername] = useState(false);
   const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
 
 
@@ -234,6 +246,70 @@ export default function DashboardPage() {
     }
   };
 
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwords.new !== passwords.confirm) {
+      showNotification('Las nuevas contraseñas no coinciden', 'error');
+      return;
+    }
+
+    setChangingPassword(true);
+    try {
+      const response = await fetch('/api/user/password', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentPassword: passwords.current,
+          newPassword: passwords.new
+        })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        showNotification('Contraseña actualizada correctamente', 'success');
+        setPasswords({ current: '', new: '', confirm: '' });
+        setShowPasswordChange(false);
+      } else {
+        showNotification(data.error || 'Error al actualizar contraseña', 'error');
+      }
+    } catch (err) {
+      showNotification('Error de conexión', 'error');
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+
+  const handleUsernameUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUsername.trim()) return;
+
+    setChangingUsername(true);
+    try {
+      const response = await fetch('/api/user', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario: newUsername })
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        showNotification('Nombre de usuario actualizado correctamente', 'success');
+        // Actualizar el estado local del usuario
+        if (user) {
+          setUser({ ...user, usuario: newUsername });
+        }
+        setShowUsernameChange(false);
+        setNewUsername('');
+      } else {
+        showNotification(data.error || 'Error al actualizar usuario', 'error');
+      }
+    } catch (err) {
+      showNotification('Error de conexión', 'error');
+    } finally {
+      setChangingUsername(false);
+    }
+  };
+
 
   if (loading) {
     return (
@@ -264,7 +340,7 @@ export default function DashboardPage() {
           </button>
           {user?.rol === 'administrador' && (
             <button className={styles.adminButton} onClick={() => router.push('/dashboard/manage-criaturas')}>
-              Gestionar Na'az
+              Panel de administrador
             </button>
           )}
           <button className={styles.logoutButton} onClick={handleLogout}>
@@ -366,13 +442,19 @@ export default function DashboardPage() {
             </div>
             <div className={styles.modalBody}>
               <div className={styles.formGroup}>
-                <label className={styles.label}>Nombre del Semillero</label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <label className={styles.label}>Nombre del Semillero</label>
+                  <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                    {(editandoId !== null ? editandoNombre : nuevoNombre).length}/25
+                  </span>
+                </div>
                 <input
                   type="text"
                   className={styles.input}
                   value={editandoId !== null ? editandoNombre : nuevoNombre}
-                  onChange={(e) => editandoId !== null ? setEditandoNombre(e.target.value) : setNuevoNombre(e.target.value)}
+                  onChange={(e) => handleNameChange(e.target.value, editandoId !== null ? setEditandoNombre : setNuevoNombre)}
                   placeholder="Ej: Mi Granero"
+                  maxLength={25}
                 />
               </div>
 
@@ -461,10 +543,117 @@ export default function DashboardPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div>
                   <h3 style={{ margin: '0 0 0.5rem 0', color: '#1e293b' }}>Información de la cuenta</h3>
-                  <p style={{ margin: 0, color: '#64748b' }}><strong>Usuario:</strong> {user?.usuario}</p>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <p style={{ margin: 0, color: '#64748b' }}><strong>Usuario:</strong> {user?.usuario}</p>
+                    <button
+                      onClick={() => {
+                        setShowUsernameChange(!showUsernameChange);
+                        setNewUsername(user?.usuario || '');
+                      }}
+                      style={{ fontSize: '0.8rem', color: '#6366f1', background: 'none', border: 'none', cursor: 'pointer', fontWeight: '600' }}
+                    >
+                      {showUsernameChange ? 'Cancelar' : 'Editar'}
+                    </button>
+                  </div>
+
+                  {showUsernameChange && (
+                    <form onSubmit={handleUsernameUpdate} style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', background: '#f8fafc', padding: '0.75rem', borderRadius: '8px' }}>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        value={newUsername}
+                        onChange={(e) => setNewUsername(e.target.value.replace(/[^a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]/g, '').slice(0, 25))}
+                        placeholder="Nuevo nombre"
+                        style={{ flex: 1, padding: '0.5rem' }}
+                        required
+                        maxLength={25}
+                      />
+                      <button
+                        type="submit"
+                        className={styles.createButton}
+                        disabled={changingUsername}
+                        style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+                      >
+                        {changingUsername ? '...' : 'OK'}
+                      </button>
+                    </form>
+                  )}
+
                   <p style={{ margin: 0, color: '#64748b' }}><strong>Correo:</strong> {user?.correo}</p>
                 </div>
 
+
+                <hr style={{ border: '0', borderTop: '1px solid #e2e8f0', margin: '0.5rem 0' }} />
+
+                <div>
+                  <h3 style={{ margin: '0 0 0.5rem 0', color: '#1e293b' }}>Seguridad</h3>
+                  {!showPasswordChange ? (
+                    <button
+                      className={styles.editButtonAction}
+                      style={{ width: '100%', padding: '0.8rem', background: '#6366f1' }}
+                      onClick={() => setShowPasswordChange(true)}
+                    >
+                      Cambiar contraseña
+                    </button>
+                  ) : (
+                    <form onSubmit={handlePasswordUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: '#f8fafc', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                      <div className={styles.formGroup}>
+                        <label className={styles.label} style={{ fontSize: '0.85rem' }}>Contraseña actual</label>
+                        <input
+                          type="password"
+                          className={styles.input}
+                          value={passwords.current}
+                          onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
+                          required
+                          style={{ padding: '0.6rem' }}
+                        />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label className={styles.label} style={{ fontSize: '0.85rem' }}>Nueva contraseña</label>
+                        <input
+                          type="password"
+                          className={styles.input}
+                          value={passwords.new}
+                          onChange={(e) => setPasswords({ ...passwords, new: e.target.value })}
+                          required
+                          style={{ padding: '0.6rem' }}
+                        />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label className={styles.label} style={{ fontSize: '0.85rem' }}>Confirmar nueva contraseña</label>
+                        <input
+                          type="password"
+                          className={styles.input}
+                          value={passwords.confirm}
+                          onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })}
+                          required
+                          style={{ padding: '0.6rem' }}
+                        />
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                        <button
+                          type="submit"
+                          className={styles.createButton}
+                          disabled={changingPassword}
+                          style={{ flex: 1, padding: '0.6rem', fontSize: '0.9rem' }}
+                        >
+                          {changingPassword ? 'Actualizando...' : 'Guardar'}
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.cancelButton}
+                          onClick={() => {
+                            setShowPasswordChange(false);
+                            setPasswords({ current: '', new: '', confirm: '' });
+                          }}
+                          style={{ flex: 1, padding: '0.6rem', fontSize: '0.9rem' }}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </div>
 
                 <hr style={{ border: '0', borderTop: '1px solid #e2e8f0', margin: '0.5rem 0' }} />
 

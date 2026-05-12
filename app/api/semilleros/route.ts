@@ -51,9 +51,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { nombre, LimiteDeCombate, LimiteMaximo, color } = body;
 
-    if (!nombre) {
+    // Validar nombre
+    const nameRegex = /^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]*$/;
+    if (!nombre || nombre.length > 25 || !nameRegex.test(nombre)) {
       return NextResponse.json(
-        { error: 'El nombre es requerido' },
+        { error: 'Nombre inválido: máx 25 caracteres, sin símbolos' },
         { status: 400 }
       );
     }

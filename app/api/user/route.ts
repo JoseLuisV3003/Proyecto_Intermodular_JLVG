@@ -16,8 +16,6 @@ export async function GET(request: NextRequest) {
 
     const userEmail = session.correo as string;
 
-
-
     // Obtener el usuario
     const user = await prisma.usuarios.findUnique({
       where: {
@@ -84,5 +82,35 @@ export async function DELETE(request: NextRequest) {
       { error: 'Error al eliminar la cuenta' },
       { status: 500 }
     );
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const session = await getUserSession(request);
+    if (!session) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
+    const { usuario } = await request.json();
+    if (!usuario) {
+      return NextResponse.json({ error: 'El nombre de usuario es requerido' }, { status: 400 });
+    }
+
+    // Validar caracteres especiales y longitud
+    const nameRegex = /^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]*$/;
+    if (!nameRegex.test(usuario) || usuario.length > 25) {
+      return NextResponse.json({ error: 'Nombre de usuario inválido (máx 25 caracteres, sin símbolos)' }, { status: 400 });
+    }
+
+    await prisma.usuarios.update({
+      where: { correo: session.correo as string },
+      data: { usuario }
+    });
+
+    return NextResponse.json({ message: 'Usuario actualizado correctamente' });
+  } catch (error) {
+    console.error('Error actualizando usuario:', error);
+    return NextResponse.json({ error: 'Error al actualizar el usuario' }, { status: 500 });
   }
 }

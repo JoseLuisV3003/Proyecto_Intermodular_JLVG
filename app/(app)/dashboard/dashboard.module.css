@@ -62,10 +62,12 @@
   background-color: #ef4444;
   color: white;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
@@ -169,15 +171,18 @@
   background-color: #10b981;
   color: white;
   border: none;
-  border-radius: 0.375rem;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .createButton:hover {
   background-color: #059669;
+  transform: translateY(-1px);
 }
 
 .createButton:disabled {
@@ -252,15 +257,18 @@
   background-color: #3b82f6;
   color: white;
   border: none;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .editButton:hover {
   background-color: #2563eb;
+  transform: translateY(-1px);
 }
 
 .cancelButton {
@@ -268,15 +276,18 @@
   background-color: #6b7280;
   color: white;
   border: none;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .cancelButton:hover {
   background-color: #4b5563;
+  transform: translateY(-1px);
 }
 
 .editButtonAction {
@@ -284,15 +295,18 @@
   background-color: #f59e0b;
   color: white;
   border: none;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .editButtonAction:hover {
   background-color: #d97706;
+  transform: translateY(-1px);
 }
 
 .emptyState {
@@ -327,9 +341,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 3rem;
-  font-size: 1.125rem;
-  color: #6b7280;
+  padding: 4rem;
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: white;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  letter-spacing: 0.02em;
+  text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4);
+  text-transform: uppercase;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: translateY(0); }
+  50% { opacity: 0.8; transform: translateY(-5px); }
 }
 
 /* Error state */
@@ -813,9 +838,11 @@
   background-color: #f59e0b;
   color: white;
   border: none;
-  border-radius: 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 600;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
@@ -1414,6 +1441,10 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   transition: all 0.4s ease;
   letter-spacing: 0.05em;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .semilleroCard:hover .semilleroCardName {
