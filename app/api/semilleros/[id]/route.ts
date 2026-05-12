@@ -48,6 +48,9 @@ export async function GET(
                 depredadores: true
               }
             }
+          },
+          orderBy: {
+            criatura_id: 'asc'
           }
         }
       }

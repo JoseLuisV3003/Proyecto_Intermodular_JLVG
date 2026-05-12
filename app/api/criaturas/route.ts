@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
         depredadores: true
       },
       orderBy: {
-        nombre: 'asc'
+        id: 'asc'
       }
     });
 

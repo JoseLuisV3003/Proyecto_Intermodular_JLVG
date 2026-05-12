@@ -261,7 +261,6 @@ export default function ManageCriaturasPage() {
   };
 
   const handleDelete = async (id: number) => {
-    // Eliminación directa por petición del usuario
     setDeletingId(id);
     try {
       const response = await fetch(`/api/criaturas/${id}`, {
@@ -445,6 +444,8 @@ export default function ManageCriaturasPage() {
               </div>
               <div className={styles.modalBody}>
                 <form className={styles.form} onSubmit={(e) => { e.preventDefault(); handleSaveEdit(); }}>
+                  
+                  {/* 1. Nombre */}
                   <div className={styles.formGroup}>
                     <label className={styles.label}>Nombre *</label>
                     <input
@@ -456,6 +457,7 @@ export default function ManageCriaturasPage() {
                     />
                   </div>
 
+                  {/* 2. Clasificación */}
                   <div className={styles.formGroup}>
                     <label className={styles.label}>Clasificación</label>
                     <input
@@ -466,64 +468,7 @@ export default function ManageCriaturasPage() {
                     />
                   </div>
 
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Tipo</label>
-                    <select
-                      className={styles.input}
-                      value={editForm.tipo || ''}
-                      onChange={(e) => handleInputChange('tipo', e.target.value)}
-                    >
-                      <option value="">Selecciona un tipo</option>
-                      <option value="Normal">Normal</option>
-                      <option value="Subtipo">Subtipo</option>
-                      <option value="Legendarios">Legendarios</option>
-                      <option value="Venerables">Venerables</option>
-                      <option value="Desterrados">Desterrados</option>
-                      <option value="Prohibidos">Prohibidos</option>
-                      <option value="Extintos">Extintos</option>
-                    </select>
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Daño Base</label>
-                    <input
-                      type="number"
-                      className={styles.input}
-                      value={editForm.danio_base || ''}
-                      onChange={(e) => handleInputChange('danio_base', parseInt(e.target.value) || 0)}
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Habilidad Ataque</label>
-                    <input
-                      type="number"
-                      className={styles.input}
-                      value={editForm.HabilidadAtaque || ''}
-                      onChange={(e) => handleInputChange('HabilidadAtaque', parseInt(e.target.value) || 0)}
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Habilidad Defensa</label>
-                    <input
-                      type="number"
-                      className={styles.input}
-                      value={editForm.HabilidadDefensa || ''}
-                      onChange={(e) => handleInputChange('HabilidadDefensa', parseInt(e.target.value) || 0)}
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Puntos Vitales</label>
-                    <input
-                      type="number"
-                      className={styles.input}
-                      value={editForm.PuntosVitales || ''}
-                      onChange={(e) => handleInputChange('PuntosVitales', parseInt(e.target.value) || 0)}
-                    />
-                  </div>
-
+                  {/* 3. Altura */}
                   <div className={styles.formGroup}>
                     <label className={styles.label}>Altura (cm)</label>
                     <input
@@ -534,63 +479,7 @@ export default function ManageCriaturasPage() {
                     />
                   </div>
 
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Germinación</label>
-                    <textarea
-                      className={styles.textarea}
-                      value={editForm.germinacion || ''}
-                      onChange={(e) => handleInputChange('germinacion', e.target.value)}
-                      rows={3}
-                      placeholder="Proceso de nacimiento y crecimiento..."
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Descripción</label>
-                    <textarea
-                      className={styles.textarea}
-                      value={editForm.descripcion || ''}
-                      onChange={(e) => handleInputChange('descripcion', e.target.value)}
-                      rows={6}
-                      placeholder="Historia, comportamiento y detalles biológicos..."
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Apariencia (URL de imagen)</label>
-                    <input
-                      type="url"
-                      className={styles.input}
-                      value={editForm.apariencia || ''}
-                      onChange={(e) => handleInputChange('apariencia', e.target.value)}
-                      placeholder="https://res.cloudinary.com/.../imagen.png"
-                    />
-                    <small className={styles.helperText}>
-                      Utiliza la URL de la imagen de Cloudinary.
-                    </small>
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Observaciones</label>
-                    <textarea
-                      className={styles.textarea}
-                      value={editForm.observaciones || ''}
-                      onChange={(e) => handleInputChange('observaciones', e.target.value)}
-                      rows={3}
-                      placeholder="Notas adicionales para el administrador..."
-                    />
-                  </div>
-
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>Forma de Ser</label>
-                    <textarea
-                      className={styles.textarea}
-                      value={editForm.forma_ser || ''}
-                      onChange={(e) => handleInputChange('forma_ser', e.target.value)}
-                      rows={2}
-                    />
-                  </div>
-
+                  {/* 4. Habilidades */}
                   <div className={styles.formSection}>
                     <h2 className={styles.sectionSubtitle}>Habilidades</h2>
                     {(editForm.habilidades || []).map((habilidad, index) => (
@@ -639,6 +528,46 @@ export default function ManageCriaturasPage() {
                     </button>
                   </div>
 
+                  {/* 5. Apariencia */}
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Apariencia (URL de imagen)</label>
+                    <input
+                      type="url"
+                      className={styles.input}
+                      value={editForm.apariencia || ''}
+                      onChange={(e) => handleInputChange('apariencia', e.target.value)}
+                      placeholder="https://res.cloudinary.com/.../imagen.png"
+                    />
+                    <small className={styles.helperText}>
+                      Utiliza la URL de la imagen de Cloudinary.
+                    </small>
+                  </div>
+
+                  {/* 6. Descripción */}
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Descripción</label>
+                    <textarea
+                      className={styles.textarea}
+                      value={editForm.descripcion || ''}
+                      onChange={(e) => handleInputChange('descripcion', e.target.value)}
+                      rows={6}
+                      placeholder="Historia, comportamiento y detalles biológicos..."
+                    />
+                  </div>
+
+                  {/* 7. Germinación */}
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Germinación</label>
+                    <textarea
+                      className={styles.textarea}
+                      value={editForm.germinacion || ''}
+                      onChange={(e) => handleInputChange('germinacion', e.target.value)}
+                      rows={3}
+                      placeholder="Proceso de nacimiento y crecimiento..."
+                    />
+                  </div>
+
+                  {/* 8. Depredadores */}
                   <div className={styles.formSection}>
                     <h2 className={styles.sectionSubtitle}>Depredadores</h2>
                     {(editForm.depredadores || []).map((depredador, index) => (
@@ -669,6 +598,92 @@ export default function ManageCriaturasPage() {
                     >
                       Añadir depredador
                     </button>
+                  </div>
+
+                  {/* 9. Observaciones */}
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Observaciones</label>
+                    <textarea
+                      className={styles.textarea}
+                      value={editForm.observaciones || ''}
+                      onChange={(e) => handleInputChange('observaciones', e.target.value)}
+                      rows={3}
+                      placeholder="Notas adicionales para el administrador..."
+                    />
+                  </div>
+
+                  {/* 10. Forma de ser */}
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Forma de Ser</label>
+                    <textarea
+                      className={styles.textarea}
+                      value={editForm.forma_ser || ''}
+                      onChange={(e) => handleInputChange('forma_ser', e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+
+                  {/* Estadísticas de Combate */}
+                  <div className={styles.formSection}>
+                    <h2 className={styles.sectionSubtitle}>Estadísticas de Combate</h2>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                      <div className={styles.formGroup}>
+                        <label className={styles.label}>Tipo</label>
+                        <select
+                          className={styles.input}
+                          value={editForm.tipo || ''}
+                          onChange={(e) => handleInputChange('tipo', e.target.value)}
+                        >
+                          <option value="Normal">Normal</option>
+                          <option value="Subtipo">Subtipo</option>
+                          <option value="Legendarios">Legendarios</option>
+                          <option value="Venerables">Venerables</option>
+                          <option value="Desterrados">Desterrados</option>
+                          <option value="Prohibidos">Prohibidos</option>
+                          <option value="Extintos">Extintos</option>
+                        </select>
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label className={styles.label}>Daño Base</label>
+                        <input
+                          type="number"
+                          className={styles.input}
+                          value={editForm.danio_base || ''}
+                          onChange={(e) => handleInputChange('danio_base', parseInt(e.target.value) || 0)}
+                        />
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label className={styles.label}>Habilidad Ataque</label>
+                        <input
+                          type="number"
+                          className={styles.input}
+                          value={editForm.HabilidadAtaque || ''}
+                          onChange={(e) => handleInputChange('HabilidadAtaque', parseInt(e.target.value) || 0)}
+                        />
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label className={styles.label}>Habilidad Defensa</label>
+                        <input
+                          type="number"
+                          className={styles.input}
+                          value={editForm.HabilidadDefensa || ''}
+                          onChange={(e) => handleInputChange('HabilidadDefensa', parseInt(e.target.value) || 0)}
+                        />
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label className={styles.label}>Puntos Vitales</label>
+                        <input
+                          type="number"
+                          className={styles.input}
+                          value={editForm.PuntosVitales || ''}
+                          onChange={(e) => handleInputChange('PuntosVitales', parseInt(e.target.value) || 0)}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </form>
               </div>
