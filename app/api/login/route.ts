@@ -60,10 +60,11 @@ export async function POST(request: NextRequest) {
 
     // Generar Token JWT
     const token = await createToken({
-      id: user.id_usuario,
       correo: user.correo,
+      usuario: user.usuario,
       rol: user.rol
     });
+
 
     // Establecer cookie con el token JWT
     response.cookies.set('userSession', token, {
