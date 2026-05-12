@@ -212,7 +212,7 @@ export default function DashboardPage() {
 
   const handleDeleteAccount = async () => {
     const confirmed = window.confirm("¿ESTÁS COMPLETAMENTE SEGURO? Esta acción es IRREVERSIBLE. Se borrarán todos tus semilleros, formaciones y datos de usuario permanentemente.");
-    
+
     if (!confirmed) return;
 
     try {
@@ -252,8 +252,8 @@ export default function DashboardPage() {
           className={styles.headerLogo}
         />
         <div className={styles.headerButtons}>
-          <button 
-            className={styles.settingsButton} 
+          <button
+            className={styles.settingsButton}
             onClick={() => setIsSettingsModalOpen(true)}
             title="Ajustes de Usuario"
           >
@@ -320,18 +320,18 @@ export default function DashboardPage() {
                       tabIndex={0}
                     >
                       <img src="/icons/delete.svg" alt="Borrar" className={styles.iconButtonImg} />
-                      
+
                       {confirmandoBorradoId === semillero.id && (
                         <div className={styles.deleteConfirmDropdown} onClick={(e) => e.stopPropagation()}>
                           <p className={styles.deleteConfirmTitle}>¿Eliminar semillero?</p>
                           <div className={styles.deleteConfirmButtons}>
-                            <button 
+                            <button
                               className={styles.confirmDeleteBtn}
                               onClick={() => confirmarEliminacion(semillero.id)}
                             >
                               Si, estoy seguro
                             </button>
-                            <button 
+                            <button
                               className={styles.cancelDeleteBtn}
                               onClick={cancelarEliminacion}
                             >
@@ -465,16 +465,16 @@ export default function DashboardPage() {
                   <p style={{ margin: 0, color: '#64748b' }}><strong>Correo:</strong> {user?.correo}</p>
                 </div>
 
-                
+
                 <hr style={{ border: '0', borderTop: '1px solid #e2e8f0', margin: '0.5rem 0' }} />
-                
+
                 <div>
                   <h3 style={{ margin: '0 0 0.5rem 0', color: '#ef4444' }}>Zona de Peligro</h3>
                   <p style={{ margin: '0 0 1rem 0', color: '#64748b', fontSize: '0.9rem' }}>
-                    Al eliminar tu cuenta, se perderán todos tus semilleros y Na'az capturados de forma permanente.
+                    Al eliminar tu cuenta, se perderán todos tus semilleros y Na'az de forma permanente.
                   </p>
-                  <button 
-                    className={styles.confirmDeleteBtn} 
+                  <button
+                    className={styles.confirmDeleteBtn}
                     style={{ width: '100%', padding: '0.8rem' }}
                     onClick={handleDeleteAccount}
                   >

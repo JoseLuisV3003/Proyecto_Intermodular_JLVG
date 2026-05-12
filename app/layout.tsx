@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Mi semillero Na'az",
-  description: "Gestiona tus semilleros y Na'az capturados",
+  description: "Gestiona tus semilleros y Na'az",
   icons: {
     icon: "/semilleros/verde.svg",
   },
