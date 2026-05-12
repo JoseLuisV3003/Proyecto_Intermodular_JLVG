@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     const userEmail = session.correo as string;
 
     const body = await request.json();
-    const { nombre, LimiteDeCombate, color } = body;
+    const { nombre, LimiteDeCombate, LimiteMaximo, color } = body;
 
     if (!nombre) {
       return NextResponse.json(
@@ -63,6 +63,7 @@ export async function POST(request: NextRequest) {
       data: {
         nombre,
         LimiteDeCombate: LimiteDeCombate !== undefined ? Number(LimiteDeCombate) : 5,
+        LimiteMaximo: LimiteMaximo !== undefined ? Number(LimiteMaximo) : 20,
         color: color || 'Verde',
         usuario_correo: userEmail
       }

@@ -30,6 +30,8 @@ export default function AddCriaturasPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [columnsPerRow, setColumnsPerRow] = useState(5);
+  const [limiteMaximo, setLimiteMaximo] = useState(20);
+  const [totalActual, setTotalActual] = useState(0);
 
   useEffect(() => {
     const cargarDatos = async () => {
@@ -51,6 +53,10 @@ export default function AddCriaturasPage() {
           criatura: sc
         }));
         setSeleccionadas(actuales);
+        setLimiteMaximo(data.semillero.LimiteMaximo || 20);
+        
+        const total = actuales.reduce((acc: number, curr: any) => acc + curr.cantidad, 0);
+        setTotalActual(total);
       }
     } catch (error) {
       console.error('Error cargando estado actual:', error);
@@ -88,13 +94,19 @@ export default function AddCriaturasPage() {
       }
 
       if (existing) {
-        return prev.map(s =>
+        const newSeleccionadas = prev.map(s =>
           s.criaturaId === criaturaId
             ? { ...s, cantidad }
             : s
         );
+        const newTotal = newSeleccionadas.reduce((acc: number, curr: any) => acc + curr.cantidad, 0);
+        setTotalActual(newTotal);
+        return newSeleccionadas;
       } else {
-        return [...prev, { criaturaId, cantidad, criatura }];
+        const newSeleccionadas = [...prev, { criaturaId, cantidad, criatura }];
+        const newTotal = newSeleccionadas.reduce((acc: number, curr: any) => acc + curr.cantidad, 0);
+        setTotalActual(newTotal);
+        return newSeleccionadas;
       }
     });
   };
@@ -176,8 +188,17 @@ export default function AddCriaturasPage() {
       </div>
 
       <div className={styles.semillerosSection}>
-        <div className={styles.addCriaturasInfo} style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', backdropFilter: 'blur(10px)' }}>
+        <div className={styles.addCriaturasInfo} style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', backdropFilter: 'blur(10px)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <p style={{ color: 'rgba(255,255,255,0.9)', margin: 0 }}>Modifica la cantidad de cada criatura. Si estableces una cantidad en 0, se eliminará del semillero.</p>
+          <div style={{ 
+            background: totalActual > limiteMaximo ? '#ef4444' : 'rgba(255,255,255,0.1)', 
+            padding: '0.5rem 1rem', 
+            borderRadius: '12px',
+            fontWeight: 'bold',
+            transition: 'all 0.3s'
+          }}>
+            Total: {totalActual} / {limiteMaximo}
+          </div>
         </div>
 
         <div className={styles.searchContainer}>
@@ -261,6 +282,7 @@ export default function AddCriaturasPage() {
                     <button
                       className={styles.cardQuantityButton}
                       onClick={() => handleCantidadChange(criatura.id, cantidad + 1)}
+                      disabled={totalActual >= limiteMaximo}
                     >
                       +
                     </button>
@@ -283,7 +305,7 @@ export default function AddCriaturasPage() {
           <button
             className={styles.createButton}
             onClick={handleGuardar}
-            disabled={saving || seleccionadas.length === 0}
+            disabled={saving || seleccionadas.length === 0 || totalActual > limiteMaximo}
             style={{ padding: '0.75rem 2.5rem' }}
           >
             {saving ? 'Guardando...' : `Confirmar Selección (${seleccionadas.length})`}

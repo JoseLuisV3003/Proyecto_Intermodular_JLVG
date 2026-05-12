@@ -35,6 +35,7 @@ interface Semillero {
   id: number;
   nombre: string;
   LimiteDeCombate: number;
+  LimiteMaximo: number;
   criaturas: Criatura[];
 }
 
@@ -58,6 +59,8 @@ export default function SemilleroDetailPage() {
   const [columnsPerRow, setColumnsPerRow] = useState(5);
   const [isEditingLimite, setIsEditingLimite] = useState(false);
   const [nuevoLimite, setNuevoLimite] = useState(5);
+  const [isEditingLimiteMaximo, setIsEditingLimiteMaximo] = useState(false);
+  const [nuevoLimiteMaximo, setNuevoLimiteMaximo] = useState(20);
 
   // Preset Selection State
   const [isPresetMode, setIsPresetMode] = useState(false);
@@ -202,6 +205,11 @@ export default function SemilleroDetailPage() {
     setIsEditingLimite(true);
   };
 
+  const handleEditLimiteMaximo = () => {
+    setNuevoLimiteMaximo(semillero?.LimiteMaximo || 20);
+    setIsEditingLimiteMaximo(true);
+  };
+
   const handleSaveLimite = async () => {
     try {
       const response = await fetch(`/api/semilleros/${params.id}`, {
@@ -212,6 +220,22 @@ export default function SemilleroDetailPage() {
       if (response.ok) {
         setSemillero(prev => prev ? { ...prev, LimiteDeCombate: nuevoLimite } : null);
         setIsEditingLimite(false);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleSaveLimiteMaximo = async () => {
+    try {
+      const response = await fetch(`/api/semilleros/${params.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ LimiteMaximo: nuevoLimiteMaximo }),
+      });
+      if (response.ok) {
+        setSemillero(prev => prev ? { ...prev, LimiteMaximo: nuevoLimiteMaximo } : null);
+        setIsEditingLimiteMaximo(false);
       }
     } catch (e) {
       console.error(e);
@@ -371,6 +395,29 @@ export default function SemilleroDetailPage() {
                 <span style={{ fontWeight: '600' }}>Límite de combate:</span>
                 <span className={styles.limiteCombateValue}>{semillero.LimiteDeCombate}</span>
                 <button onClick={handleEditLimite} className={styles.editButtonAction} style={{ padding: '0.3rem 0.8rem', fontSize: '0.8rem', marginLeft: '0.5rem', borderRadius: '8px' }}>Editar</button>
+              </>
+            )}
+          </div>
+          <div className={styles.limiteCombateBadge}>
+            {isEditingLimiteMaximo ? (
+              <>
+                <span style={{ fontWeight: '600' }}>Capacidad:</span>
+                <input
+                  type="number"
+                  value={nuevoLimiteMaximo}
+                  onChange={(e) => setNuevoLimiteMaximo(parseInt(e.target.value) || 20)}
+                  className={styles.immersiveSearchInput}
+                  style={{ width: '80px', padding: '0.3rem', margin: 0, height: 'auto' }}
+                  min="1"
+                />
+                <button onClick={handleSaveLimiteMaximo} className={styles.createButton} style={{ padding: '0.3rem 0.8rem', margin: 0 }}>Guardar</button>
+                <button onClick={() => setIsEditingLimiteMaximo(false)} className={styles.cancelButton} style={{ padding: '0.3rem 0.8rem', margin: 0 }}>Cancelar</button>
+              </>
+            ) : (
+              <>
+                <span style={{ fontWeight: '600' }}>Capacidad:</span>
+                <span className={styles.limiteCombateValue}>{semillero.LimiteMaximo}</span>
+                <button onClick={handleEditLimiteMaximo} className={styles.editButtonAction} style={{ padding: '0.3rem 0.8rem', fontSize: '0.8rem', marginLeft: '0.5rem', borderRadius: '8px' }}>Editar</button>
               </>
             )}
           </div>

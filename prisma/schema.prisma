@@ -25,6 +25,7 @@ model Semillero {
   nombre        String   @db.VarChar(100)
   color         String?  @db.VarChar(50)
   LimiteDeCombate Int    @default(5)
+  LimiteMaximo    Int    @default(20)
   usuario_correo String  @db.VarChar(50)
   usuario       usuarios @relation(fields: [usuario_correo], references: [correo], onDelete: Cascade)
   criaturas     SemilleroCriatura[]

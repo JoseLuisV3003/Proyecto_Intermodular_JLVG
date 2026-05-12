@@ -8,6 +8,8 @@ interface Semillero {
   id: number;
   nombre: string;
   color?: string;
+  LimiteDeCombate?: number;
+  LimiteMaximo?: number;
   usuario_correo: string;
 }
 
@@ -33,12 +35,14 @@ export default function DashboardPage() {
   const [semilleros, setSemilleros] = useState<Semillero[]>([]);
   const [nuevoNombre, setNuevoNombre] = useState('');
   const [nuevoLimite, setNuevoLimite] = useState(5);
+  const [nuevoLimiteMaximo, setNuevoLimiteMaximo] = useState(20);
   const [nuevoColor, setNuevoColor] = useState('Verde');
   const [user, setUser] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editandoId, setEditandoId] = useState<number | null>(null);
   const [editandoNombre, setEditandoNombre] = useState('');
   const [editandoColor, setEditandoColor] = useState('');
+  const [editandoLimiteMaximo, setEditandoLimiteMaximo] = useState(20);
   const [loading, setLoading] = useState(true);
   const [confirmandoBorradoId, setConfirmandoBorradoId] = useState<number | null>(null);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
@@ -94,6 +98,7 @@ export default function DashboardPage() {
         body: JSON.stringify({
           nombre: nuevoNombre,
           LimiteDeCombate: nuevoLimite,
+          LimiteMaximo: nuevoLimiteMaximo,
           color: nuevoColor
         }),
       });
@@ -103,6 +108,7 @@ export default function DashboardPage() {
         setSemilleros([...semilleros, data.semillero]);
         setNuevoNombre('');
         setNuevoLimite(5);
+        setNuevoLimiteMaximo(20);
         setNuevoColor('Verde');
         setIsModalOpen(false);
       }
@@ -115,6 +121,7 @@ export default function DashboardPage() {
     setEditandoId(semillero.id);
     setEditandoNombre(semillero.nombre);
     setEditandoColor(semillero.color || 'Verde');
+    setEditandoLimiteMaximo(semillero.LimiteMaximo || 20);
   };
 
   const guardarEdicion = async () => {
@@ -128,7 +135,8 @@ export default function DashboardPage() {
         },
         body: JSON.stringify({
           nombre: editandoNombre,
-          color: editandoColor
+          color: editandoColor,
+          LimiteMaximo: editandoLimiteMaximo
         }),
       });
 
@@ -140,6 +148,7 @@ export default function DashboardPage() {
         setEditandoId(null);
         setEditandoNombre('');
         setEditandoColor('');
+        setEditandoLimiteMaximo(20);
       }
     } catch (error) {
       console.error('Error editando semillero:', error);
@@ -150,6 +159,7 @@ export default function DashboardPage() {
     setEditandoId(null);
     setEditandoNombre('');
     setEditandoColor('');
+    setEditandoLimiteMaximo(20);
   };
 
   const handleDeleteSemillero = (id: number) => {
@@ -366,14 +376,37 @@ export default function DashboardPage() {
                 />
               </div>
 
-              {editandoId === null && (
+              {editandoId === null ? (
+                <>
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Límite de Combate</label>
+                    <input
+                      type="number"
+                      className={styles.input}
+                      value={nuevoLimite}
+                      onChange={(e) => setNuevoLimite(parseInt(e.target.value) || 5)}
+                      min="1"
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label className={styles.label}>Capacidad Máxima de Na'az</label>
+                    <input
+                      type="number"
+                      className={styles.input}
+                      value={nuevoLimiteMaximo}
+                      onChange={(e) => setNuevoLimiteMaximo(parseInt(e.target.value) || 20)}
+                      min="1"
+                    />
+                  </div>
+                </>
+              ) : (
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Límite de Combate</label>
+                  <label className={styles.label}>Capacidad Máxima de Na'az</label>
                   <input
                     type="number"
                     className={styles.input}
-                    value={nuevoLimite}
-                    onChange={(e) => setNuevoLimite(parseInt(e.target.value) || 5)}
+                    value={editandoLimiteMaximo}
+                    onChange={(e) => setEditandoLimiteMaximo(parseInt(e.target.value) || 20)}
                     min="1"
                   />
                 </div>

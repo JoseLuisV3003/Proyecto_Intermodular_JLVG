@@ -54,6 +54,16 @@ export async function POST(
       );
     }
 
+    // Validar el límite máximo de criaturas
+    const totalCantidadSolicitada = criaturas.reduce((acc: number, c: any) => acc + (Number(c.cantidad) || 0), 0);
+    
+    if (totalCantidadSolicitada > semillero.LimiteMaximo) {
+      return NextResponse.json(
+        { error: `El semillero tiene un límite máximo de ${semillero.LimiteMaximo} Na'az. Estás intentando guardar ${totalCantidadSolicitada}.` },
+        { status: 400 }
+      );
+    }
+
     // Procesar cada criatura
     const updates = [];
     const errors = [];

@@ -66,6 +66,7 @@ export async function GET(
       nombre: semillero.nombre,
       color: semillero.color,
       LimiteDeCombate: semillero.LimiteDeCombate,
+      LimiteMaximo: semillero.LimiteMaximo,
       criaturas: semillero.criaturas.map((sc) => ({
         id: sc.criatura.id,
         nombre: sc.criatura.nombre,
@@ -128,11 +129,11 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { nombre, LimiteDeCombate, color } = body;
+    const { nombre, LimiteDeCombate, LimiteMaximo, color } = body;
 
-    if (!nombre && LimiteDeCombate === undefined && !color) {
+    if (!nombre && LimiteDeCombate === undefined && LimiteMaximo === undefined && !color) {
       return NextResponse.json(
-        { error: 'Se requiere nombre, LimiteDeCombate o color' },
+        { error: 'Se requiere nombre, LimiteDeCombate, LimiteMaximo o color' },
         { status: 400 }
       );
     }
@@ -156,6 +157,7 @@ export async function PUT(
     const updateData: any = {};
     if (nombre !== undefined) updateData.nombre = nombre;
     if (LimiteDeCombate !== undefined) updateData.LimiteDeCombate = Number(LimiteDeCombate);
+    if (LimiteMaximo !== undefined) updateData.LimiteMaximo = Number(LimiteMaximo);
     if (color !== undefined) updateData.color = color;
 
     const semilleroActualizado = await prisma.semillero.update({
