@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../lib/prisma';
+import { getUserSession } from '../../lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
-    // Obtener el correo del usuario de la cookie
-    const userSession = request.cookies.get('userSession');
-    if (!userSession) {
+    const session = await getUserSession(request);
+    
+    if (!session) {
       return NextResponse.json(
         { error: 'No autorizado' },
         { status: 401 }
       );
     }
 
-    const userEmail = userSession.value;
+    const userEmail = session.correo as string;
 
     // Obtener todos los semilleros del usuario
     const semilleros = await prisma.semillero.findMany({
@@ -36,16 +37,17 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Obtener el correo del usuario de la cookie
-    const userSession = request.cookies.get('userSession');
-    if (!userSession) {
+    const session = await getUserSession(request);
+    
+    if (!session) {
       return NextResponse.json(
         { error: 'No autorizado' },
         { status: 401 }
       );
     }
 
-    const userEmail = userSession.value;
+    const userEmail = session.correo as string;
+
     const body = await request.json();
     const { nombre, LimiteDeCombate, color } = body;
 

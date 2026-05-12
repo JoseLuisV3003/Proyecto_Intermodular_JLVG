@@ -1,21 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../../lib/prisma';
+import { getUserSession } from '../../../../lib/auth';
+
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Obtener el correo del usuario de la cookie
-    const userSession = request.cookies.get('userSession');
-    if (!userSession) {
+    const session = await getUserSession(request);
+    
+    if (!session) {
       return NextResponse.json(
         { error: 'No autorizado' },
         { status: 401 }
       );
     }
 
-    const userEmail = userSession.value;
+    const userEmail = session.correo as string;
+
     const { id } = await params;
     const semilleroId = parseInt(id);
 
@@ -133,16 +136,17 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Obtener el correo del usuario de la cookie
-    const userSession = request.cookies.get('userSession');
-    if (!userSession) {
+    const session = await getUserSession(request);
+    
+    if (!session) {
       return NextResponse.json(
         { error: 'No autorizado' },
         { status: 401 }
       );
     }
 
-    const userEmail = userSession.value;
+    const userEmail = session.correo as string;
+
     const { id } = await params;
     const semilleroId = parseInt(id);
 

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../lib/prisma';
 import bcrypt from 'bcrypt';
+import { createToken } from '../../lib/auth';
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -56,13 +58,21 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
 
-    // Establecer cookie con información del usuario (opcional)
-    response.cookies.set('userSession', user.correo, {
+    // Generar Token JWT
+    const token = await createToken({
+      id: user.id_usuario,
+      correo: user.correo,
+      rol: user.rol
+    });
+
+    // Establecer cookie con el token JWT
+    response.cookies.set('userSession', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 // 24 horas
     });
+
 
     return response;
   } catch (error) {

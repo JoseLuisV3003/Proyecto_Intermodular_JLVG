@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyToken } from './app/lib/auth';
 
-export function middleware(request: NextRequest) {
+
+export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   
   // Rutas protegidas que requieren autenticación
@@ -12,14 +14,23 @@ export function middleware(request: NextRequest) {
   );
   
   if (isProtectedRoute) {
-    // Verificar si existe la cookie de sesión
     const userSession = request.cookies.get('userSession');
-    
-    if (!userSession) {
-      // Redirigir a login si no tiene sesión
+    if (userSession) {
+
+      // Verificar si el token es válido
+      const payload = await verifyToken(userSession.value);
+      
+      if (!payload) {
+        // Token inválido o expirado, redirigir a login
+        const loginUrl = new URL('/login', request.url);
+        return NextResponse.redirect(loginUrl);
+      }
+    } else {
+      // No hay cookie, redirigir a login
       const loginUrl = new URL('/login', request.url);
       return NextResponse.redirect(loginUrl);
     }
+
   }
   
   return NextResponse.next();
