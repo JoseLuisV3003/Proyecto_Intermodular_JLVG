@@ -9,7 +9,7 @@ export async function POST(
 ) {
   try {
     const session = await getUserSession(request);
-    
+
     if (!session) {
       return NextResponse.json(
         { error: 'No autorizado' },
@@ -56,7 +56,7 @@ export async function POST(
 
     // Validar el límite máximo de criaturas
     const totalCantidadSolicitada = criaturas.reduce((acc: number, c: any) => acc + (Number(c.cantidad) || 0), 0);
-    
+
     if (totalCantidadSolicitada > semillero.LimiteMaximo) {
       return NextResponse.json(
         { error: `El semillero tiene un límite máximo de ${semillero.LimiteMaximo} Na'az. Estás intentando guardar ${totalCantidadSolicitada}.` },
@@ -149,7 +149,7 @@ export async function DELETE(
 ) {
   try {
     const session = await getUserSession(request);
-    
+
     if (!session) {
       return NextResponse.json(
         { error: 'No autorizado' },
@@ -235,7 +235,7 @@ export async function DELETE(
     } else {
       // Solo restar la cantidad especificada
       const nuevaCantidad = semilleroCriatura.cantidad - cantidad;
-      
+
       await prisma.semilleroCriatura.update({
         where: {
           semillero_id_criatura_id: {

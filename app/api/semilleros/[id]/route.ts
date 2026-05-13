@@ -9,7 +9,7 @@ export async function GET(
 ) {
   try {
     const session = await getUserSession(request);
-    
+
     if (!session) {
       return NextResponse.json(
         { error: 'No autorizado' },
@@ -111,7 +111,7 @@ export async function PUT(
 ) {
   try {
     const session = await getUserSession(request);
-    
+
     if (!session) {
       return NextResponse.json(
         { error: 'No autorizado' },
@@ -199,7 +199,7 @@ export async function DELETE(
 ) {
   try {
     const session = await getUserSession(request);
-    
+
     if (!session) {
       return NextResponse.json(
         { error: 'No autorizado' },

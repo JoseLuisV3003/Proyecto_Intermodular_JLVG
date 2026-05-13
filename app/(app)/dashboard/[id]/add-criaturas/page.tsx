@@ -54,7 +54,7 @@ export default function AddCriaturasPage() {
         }));
         setSeleccionadas(actuales);
         setLimiteMaximo(data.semillero.LimiteMaximo || 20);
-        
+
         const total = actuales.reduce((acc: number, curr: any) => acc + curr.cantidad, 0);
         setTotalActual(total);
       }
@@ -89,11 +89,8 @@ export default function AddCriaturasPage() {
 
       if (!criatura) return prev;
 
-      if (cantidad === 0) {
-        return prev.filter(s => s.criaturaId !== criaturaId);
-      }
-
       if (existing) {
+
         const newSeleccionadas = prev.map(s =>
           s.criaturaId === criaturaId
             ? { ...s, cantidad }
@@ -102,16 +99,21 @@ export default function AddCriaturasPage() {
         const newTotal = newSeleccionadas.reduce((acc: number, curr: any) => acc + curr.cantidad, 0);
         setTotalActual(newTotal);
         return newSeleccionadas;
-      } else {
+      } else if (cantidad > 0) {
+
         const newSeleccionadas = [...prev, { criaturaId, cantidad, criatura }];
         const newTotal = newSeleccionadas.reduce((acc: number, curr: any) => acc + curr.cantidad, 0);
         setTotalActual(newTotal);
         return newSeleccionadas;
       }
+
+      return prev;
     });
   };
 
   const handleGuardar = async () => {
+    // Permitimos guardar si hay algo en la lista, incluso si son cantidades 0 
+    // (para permitir eliminar criaturas del semillero)
     if (seleccionadas.length === 0) {
       router.push(`/dashboard/${params.id}`);
       return;
@@ -179,7 +181,7 @@ export default function AddCriaturasPage() {
         <h1 className={styles.headerTitle}>Gestionar Criaturas</h1>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <button className={styles.createButton} onClick={handleGuardar} disabled={saving || seleccionadas.length === 0}>
-            {saving ? 'Guardando...' : `Guardar (${seleccionadas.length})`}
+            {saving ? 'Guardando...' : `Guardar (${seleccionadas.filter(s => s.cantidad > 0).length})`}
           </button>
           <button className={styles.logoutButton} onClick={handleVolver}>
             ← Volver
@@ -190,9 +192,9 @@ export default function AddCriaturasPage() {
       <div className={styles.semillerosSection}>
         <div className={styles.addCriaturasInfo} style={{ background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', backdropFilter: 'blur(10px)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <p style={{ color: 'rgba(255,255,255,0.9)', margin: 0 }}>Modifica la cantidad de cada criatura. Si estableces una cantidad en 0, se eliminará del semillero.</p>
-          <div style={{ 
-            background: totalActual > limiteMaximo ? '#ef4444' : 'rgba(255,255,255,0.1)', 
-            padding: '0.5rem 1rem', 
+          <div style={{
+            background: totalActual > limiteMaximo ? '#ef4444' : 'rgba(255,255,255,0.1)',
+            padding: '0.5rem 1rem',
             borderRadius: '12px',
             fontWeight: 'bold',
             transition: 'all 0.3s'
@@ -269,7 +271,7 @@ export default function AddCriaturasPage() {
                   ) : (
                     <div style={{ height: '100px' }} />
                   )}
-                  
+
                   <div className={`${styles.cardQuantityControls} ${cantidad > 0 ? styles.cardQuantityControlsActive : ''}`}>
                     <button
                       className={styles.cardQuantityButton}
@@ -308,7 +310,7 @@ export default function AddCriaturasPage() {
             disabled={saving || seleccionadas.length === 0 || totalActual > limiteMaximo}
             style={{ padding: '0.75rem 2.5rem' }}
           >
-            {saving ? 'Guardando...' : `Confirmar Selección (${seleccionadas.length})`}
+            {saving ? 'Guardando...' : `Confirmar Selección (${seleccionadas.filter(s => s.cantidad > 0).length})`}
           </button>
         </div>
       </div>
