@@ -181,6 +181,8 @@ export async function PUT(
       data: updateData
     });
 
+    console.log(`[APP] Semillero actualizado (ID: ${semilleroId}): "${semilleroActualizado.nombre}" por ${userEmail}`);
+
     return NextResponse.json({ semillero: semilleroActualizado });
   } catch (error) {
     console.error('Error actualizando semillero:', error);
@@ -236,6 +238,8 @@ export async function DELETE(
         id: semilleroId,
       },
     });
+
+    console.log(`[APP] Semillero eliminado (ID: ${semilleroId}) por ${userEmail}`);
 
     return NextResponse.json({ message: 'Semillero eliminado correctamente' });
   } catch (error) {

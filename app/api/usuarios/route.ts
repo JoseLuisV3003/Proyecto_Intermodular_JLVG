@@ -95,6 +95,8 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    console.log(`[AUTH] Nuevo usuario registrado: ${correo} (Rol: ${finalRol})`);
+
     return NextResponse.json(newUser, { status: 201 });
   } catch (error) {
     console.error(error);

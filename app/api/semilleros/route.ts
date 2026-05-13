@@ -71,6 +71,8 @@ export async function POST(request: NextRequest) {
       }
     });
 
+    console.log(`[APP] Semillero creado: "${nombre}" por ${userEmail}`);
+
     return NextResponse.json({ semillero: nuevoSemillero }, { status: 201 });
   } catch (error) {
     console.error('Error creando semillero:', error);

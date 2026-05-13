@@ -74,6 +74,7 @@ export async function POST(request: NextRequest) {
       maxAge: 60 * 60 * 24 // 24 horas
     });
 
+    console.log(`[AUTH] Login exitoso: ${user.correo} (${user.rol})`);
 
     return response;
   } catch (error) {

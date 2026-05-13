@@ -191,6 +191,8 @@ export async function POST(request: NextRequest) {
       }
     });
 
+    console.log(`[ADMIN] Nueva criatura creada: "${nuevaCriatura.nombre}" (ID: ${nuevaCriatura.id})`);
+
     return NextResponse.json(
       { criatura: nuevaCriatura, message: 'Criatura creada exitosamente' },
       { status: 201 }

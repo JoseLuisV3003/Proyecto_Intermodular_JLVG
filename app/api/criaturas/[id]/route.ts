@@ -159,6 +159,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       }
     });
 
+    console.log(`[ADMIN] Criatura actualizada (ID: ${criaturaId}): "${criaturaActualizada?.nombre}"`);
+
     return NextResponse.json(
       { criatura: criaturaActualizada, message: 'Criatura actualizada exitosamente' },
       { status: 200 }
@@ -218,6 +220,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     await prisma.criatura.delete({
       where: { id: criaturaId }
     });
+
+    console.log(`[ADMIN] Criatura eliminada (ID: ${criaturaId}): "${criaturaExistente.nombre}"`);
 
     return NextResponse.json(
       { message: 'Criatura eliminada exitosamente' },

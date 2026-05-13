@@ -121,6 +121,8 @@ export async function POST(
       });
     }
 
+    console.log(`[APP] Criaturas actualizadas en Semillero ${semilleroId} por ${userEmail}. Cambios: ${updates.length}`);
+
     return NextResponse.json({
       success: true,
       message: 'Criaturas actualizadas correctamente',
@@ -245,6 +247,8 @@ export async function DELETE(
           cantidad: nuevaCantidad
         }
       });
+
+      console.log(`[APP] Criaturas eliminadas de Semillero ${semilleroId} por ${userEmail}. CriaturaID: ${criaturaId}, Cantidad: ${cantidad}`);
 
       return NextResponse.json({
         success: true,

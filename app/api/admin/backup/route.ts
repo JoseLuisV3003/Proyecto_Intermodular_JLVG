@@ -22,6 +22,8 @@ export async function GET(request: NextRequest) {
       version: '1.0'
     };
 
+    console.log(`[SYSTEM] Copia de seguridad generada correctamente.`);
+
     return NextResponse.json(data);
   } catch (error) {
     console.error('Backup Error:', error);

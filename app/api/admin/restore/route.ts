@@ -51,6 +51,8 @@ export async function POST(request: NextRequest) {
       await tx.presetCriatura.createMany({ data: backupData.preset_criaturas });
     });
 
+    console.log(`[SYSTEM] Restauración del sistema completada con éxito.`);
+
     return NextResponse.json({ message: 'System restored successfully' });
   } catch (error) {
     console.error('Restore Error:', error);
