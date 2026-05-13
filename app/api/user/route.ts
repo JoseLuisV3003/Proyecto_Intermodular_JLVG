@@ -103,6 +103,20 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Nombre de usuario inválido (máx 25 caracteres, sin símbolos)' }, { status: 400 });
     }
 
+    // Verificar si el nombre de usuario ya está en uso por otro usuario
+    const existingUsername = await prisma.usuarios.findFirst({
+      where: { 
+        usuario,
+        NOT: {
+          correo: session.correo as string
+        }
+      }
+    });
+
+    if (existingUsername) {
+      return NextResponse.json({ error: 'El nombre de usuario ya está en uso' }, { status: 409 });
+    }
+
     await prisma.usuarios.update({
       where: { correo: session.correo as string },
       data: { usuario }
