@@ -1,13 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../lib/prisma';
+import { getUserSession } from '../../../lib/auth';
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await getUserSession(request);
+    if (!session) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
     const { id } = await params;
     const presetId = parseInt(id);
+
+    // Verificar propiedad a través del semillero
+    const preset = await prisma.preset.findUnique({
+      where: { id: presetId },
+      include: { semillero: true }
+    });
+
+    if (!preset || preset.semillero.usuario_correo !== session.correo) {
+      return NextResponse.json({ error: 'Formación no encontrada o no autorizada' }, { status: 404 });
+    }
+
     const body = await request.json();
     const { nombre, criaturas } = body;
 
@@ -53,8 +70,23 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await getUserSession(request);
+    if (!session) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
     const { id } = await params;
     const presetId = parseInt(id);
+
+    // Verificar propiedad a través del semillero
+    const preset = await prisma.preset.findUnique({
+      where: { id: presetId },
+      include: { semillero: true }
+    });
+
+    if (!preset || preset.semillero.usuario_correo !== session.correo) {
+      return NextResponse.json({ error: 'Formación no encontrada o no autorizada' }, { status: 404 });
+    }
 
     await prisma.preset.delete({
       where: { id: presetId }

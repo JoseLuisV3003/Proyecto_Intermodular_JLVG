@@ -10,6 +10,7 @@ export default function CreateCriaturaPage() {
     nombre: '',
     clasificacion: '',
     tipo: 'Normal',
+    tipo_ataque: '',
     danio_base: '',
     HabilidadAtaque: '',
     HabilidadDefensa: '',
@@ -70,6 +71,7 @@ export default function CreateCriaturaPage() {
     try {
       const dataToSend = {
         ...formData,
+        tipo_ataque: formData.tipo_ataque || null,
         danio_base: formData.danio_base ? parseInt(formData.danio_base) : null,
         HabilidadAtaque: formData.HabilidadAtaque ? parseInt(formData.HabilidadAtaque) : null,
         HabilidadDefensa: formData.HabilidadDefensa ? parseInt(formData.HabilidadDefensa) : null,
@@ -400,7 +402,30 @@ export default function CreateCriaturaPage() {
                   />
                 </div>
               </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginTop: '1.5rem' }}>
+                <div className={styles.formGroup}>
+                  <label htmlFor="tipo_ataque" className={styles.label}>Tipo de Ataque</label>
+                  <select
+                    id="tipo_ataque"
+                    name="tipo_ataque"
+                    className={styles.input}
+                    value={formData.tipo_ataque}
+                    onChange={handleChange}
+                  >
+                    <option value="">Ninguno</option>
+                    <option value="Filo">Filo</option>
+                    <option value="Contundente">Contundente</option>
+                    <option value="Penetrante">Penetrante</option>
+                    <option value="Calor">Calor</option>
+                    <option value="Electricidad">Electricidad</option>
+                    <option value="Frio">Frío</option>
+                    <option value="Energia">Energía</option>
+                  </select>
+                </div>
+              </div>
             </div>
+
 
             {error && <div className={styles.error} style={{ marginTop: '1rem' }}>{error}</div>}
           </form>

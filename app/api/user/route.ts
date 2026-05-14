@@ -67,7 +67,7 @@ export async function DELETE(request: NextRequest) {
 
     // Crear respuesta y limpiar la cookie de sesión
     const response = NextResponse.json({ message: 'Cuenta eliminada correctamente' });
-    response.cookies.set('session', '', {
+    response.cookies.set('userSession', '', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

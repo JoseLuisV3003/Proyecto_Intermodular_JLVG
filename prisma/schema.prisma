@@ -66,11 +66,22 @@ enum CriaturaTipo {
   Extintos
 }
 
+enum TipoAtaque {
+  Filo
+  Contundente
+  Penetrante
+  Calor
+  Electricidad
+  Frio
+  Energia
+}
+
 model Criatura {
   id            Int      @id @default(autoincrement())
   nombre        String   @db.VarChar(100)
   clasificacion String?  @db.VarChar(100)
   tipo          CriaturaTipo? @default(Normal)
+  tipo_ataque   TipoAtaque?
   danio_base    Int?
   germinacion   String?  @db.Text
   descripcion   String?  @db.Text
@@ -89,6 +100,7 @@ model Criatura {
 
   @@map("criaturas")
 }
+
 
 model Habilidad {
   id          Int      @id @default(autoincrement())

@@ -192,6 +192,7 @@ export default function DashboardPage() {
           setEditandoId(null);
           setEditandoNombre('');
           setEditandoColor('');
+          setEditandoLimiteMaximo(20);
         }
       } else {
         showNotification('Error al eliminar el semillero.', 'error');

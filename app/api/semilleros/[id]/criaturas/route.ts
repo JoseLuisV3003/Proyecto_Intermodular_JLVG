@@ -55,11 +55,44 @@ export async function POST(
     }
 
     // Validar el límite máximo de criaturas
-    const totalCantidadSolicitada = criaturas.reduce((acc: number, c: any) => acc + (Number(c.cantidad) || 0), 0);
+    // No podemos confiar solo en lo que envía el cliente, debemos ver qué hay en la DB
+    // y cómo quedaría tras la actualización.
+    
+    // 1. Obtener criaturas actuales en el semillero
+    const criaturasActuales = await prisma.semilleroCriatura.findMany({
+      where: { semillero_id: semilleroId }
+    });
 
-    if (totalCantidadSolicitada > semillero.LimiteMaximo) {
+    // 2. Crear un mapa de las cantidades finales proyectadas
+    const mapaCantidadesFinales = new Map<number, number>();
+    
+    // Empezamos con lo que hay en la base de datos
+    criaturasActuales.forEach(c => {
+      mapaCantidadesFinales.set(c.criatura_id, c.cantidad);
+    });
+
+    // Aplicamos los cambios que vienen en la petición
+    criaturas.forEach((c: any) => {
+      const id = Number(c.criaturaId);
+      const cant = Number(c.cantidad);
+      if (!isNaN(id)) {
+        if (cant === 0) {
+          mapaCantidadesFinales.delete(id);
+        } else {
+          mapaCantidadesFinales.set(id, cant);
+        }
+      }
+    });
+
+    // 3. Calcular el total proyectado
+    let totalProyectado = 0;
+    mapaCantidadesFinales.forEach(cantidad => {
+      totalProyectado += cantidad;
+    });
+
+    if (totalProyectado > semillero.LimiteMaximo) {
       return NextResponse.json(
-        { error: `El semillero tiene un límite máximo de ${semillero.LimiteMaximo} Na'az. Estás intentando guardar ${totalCantidadSolicitada}.` },
+        { error: `El semillero tiene un límite máximo de ${semillero.LimiteMaximo} Na'az. Tras esta operación habría ${totalProyectado}.` },
         { status: 400 }
       );
     }

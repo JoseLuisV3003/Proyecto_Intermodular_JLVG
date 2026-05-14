@@ -10,6 +10,7 @@ interface Criatura {
   apariencia?: string;
   clasificacion?: string;
   cantidad: number;
+  tipo_ataque?: string;
   danio_base?: number;
   HabilidadAtaque?: number;
   HabilidadDefensa?: number;
@@ -526,10 +527,18 @@ export default function CombatePage() {
               {/* Daño Base */}
               {modalCriatura.danio_base !== undefined && modalCriatura.danio_base !== null && (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#fef2f2', padding: '1rem', borderRadius: '0.5rem', border: '1px solid #fecaca' }}>
-                  <strong style={{ color: '#991b1b', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>Daño Base</strong>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <strong style={{ color: '#991b1b', fontSize: '1.1rem' }}>Daño Base</strong>
+                    {modalCriatura.tipo_ataque && (
+                      <span style={{ fontSize: '0.9rem', color: '#6366f1', fontWeight: '600' }}>
+                        Tipo: {modalCriatura.tipo_ataque.replace('Frio', 'Frío').replace('Energia', 'Energía')}
+                      </span>
+                    )}
+                  </div>
                   <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ef4444' }}>{modalCriatura.danio_base}</span>
                 </div>
               )}
+
 
               {/* Estadísticas Nuevas */}
               {(modalCriatura.HabilidadAtaque != null || modalCriatura.HabilidadDefensa != null || modalCriatura.PuntosVitales != null) && (

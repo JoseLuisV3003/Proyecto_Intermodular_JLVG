@@ -20,6 +20,7 @@ interface Criatura {
   nombre: string;
   clasificacion?: string;
   tipo?: string;
+  tipo_ataque?: string;
   danio_base?: number;
   HabilidadAtaque?: number;
   HabilidadDefensa?: number;
@@ -143,6 +144,7 @@ export default function ManageCriaturasPage() {
     setEditingId(criatura.id);
     setEditForm({
       ...criatura,
+      tipo_ataque: criatura.tipo_ataque || '',
       habilidades: criatura.habilidades.map((habilidad) => ({
         id: habilidad.id,
         nombre: habilidad.nombre,
@@ -218,6 +220,7 @@ export default function ManageCriaturasPage() {
     try {
       const dataToSend: any = {
         ...editForm,
+        tipo_ataque: editForm.tipo_ataque || null,
         danio_base: typeof editForm.danio_base === 'number' ? editForm.danio_base : null,
         HabilidadAtaque: typeof editForm.HabilidadAtaque === 'number' ? editForm.HabilidadAtaque : null,
         HabilidadDefensa: typeof editForm.HabilidadDefensa === 'number' ? editForm.HabilidadDefensa : null,
@@ -408,9 +411,14 @@ export default function ManageCriaturasPage() {
                     <p className={styles.adminDetailText} style={{ fontStyle: 'italic' }}>{criatura.clasificacion}</p>
                   )}
                   <p className={styles.adminDetailText}>ID: {criatura.id}</p>
-                  {columnsPerRow !== 8 && criatura.danio_base && (
-                    <p className={styles.adminDetailText}>Daño: {criatura.danio_base}</p>
+                  {columnsPerRow !== 8 && (criatura.danio_base || criatura.tipo_ataque) && (
+                    <p className={styles.adminDetailText}>
+                      {criatura.danio_base ? `Daño: ${criatura.danio_base}` : ''}
+                      {criatura.danio_base && criatura.tipo_ataque ? ' ' : ''}
+                      {criatura.tipo_ataque ? `(${criatura.tipo_ataque.replace('Frio', 'Frío').replace('Energia', 'Energía')})` : ''}
+                    </p>
                   )}
+
                 </div>
 
                 <div className={styles.criaturaActions}>
@@ -652,6 +660,24 @@ export default function ManageCriaturasPage() {
                           value={editForm.danio_base || ''}
                           onChange={(e) => handleInputChange('danio_base', parseInt(e.target.value) || 0)}
                         />
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label className={styles.label}>Tipo de Ataque</label>
+                        <select
+                          className={styles.input}
+                          value={editForm.tipo_ataque || ''}
+                          onChange={(e) => handleInputChange('tipo_ataque', e.target.value)}
+                        >
+                          <option value="">Ninguno</option>
+                          <option value="Filo">Filo</option>
+                          <option value="Contundente">Contundente</option>
+                          <option value="Penetrante">Penetrante</option>
+                          <option value="Calor">Calor</option>
+                          <option value="Electricidad">Electricidad</option>
+                          <option value="Frio">Frío</option>
+                          <option value="Energia">Energía</option>
+                        </select>
                       </div>
 
                       <div className={styles.formGroup}>

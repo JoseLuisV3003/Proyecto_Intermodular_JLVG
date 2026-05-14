@@ -9,6 +9,7 @@ interface Criatura {
   nombre: string;
   clasificacion?: string;
   tipo?: string;
+  tipo_ataque?: string;
   danio_base?: number;
   germinacion?: string;
   descripcion?: string;
@@ -688,8 +689,16 @@ export default function SemilleroDetailPage() {
                           <div className={styles.manualText}><strong>PVs:</strong> {selectedCriatura.PuntosVitales}</div>
                         )}
                         {selectedCriatura.danio_base != null && (
-                          <div className={styles.manualText}><strong>Daño Base:</strong> {selectedCriatura.danio_base}</div>
+                          <div className={styles.manualText}>
+                            <strong>Daño Base:</strong> {selectedCriatura.danio_base}
+                            {selectedCriatura.tipo_ataque && (
+                              <span style={{ marginLeft: '0.5rem', color: '#6366f1' }}>
+                                ({selectedCriatura.tipo_ataque.replace('Frio', 'Frío').replace('Energia', 'Energía')})
+                              </span>
+                            )}
+                          </div>
                         )}
+
                       </div>
                     </div>
                   )}

@@ -1,13 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../../../../lib/prisma';
+import { getUserSession } from '../../../../lib/auth';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await getUserSession(request);
+    if (!session) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
     const { id } = await params;
     const semilleroId = parseInt(id);
+
+    // Verificar propiedad del semillero
+    const semillero = await prisma.semillero.findFirst({
+      where: {
+        id: semilleroId,
+        usuario_correo: session.correo as string
+      }
+    });
+
+    if (!semillero) {
+      return NextResponse.json({ error: 'Semillero no encontrado o no autorizado' }, { status: 404 });
+    }
 
     const presets = await prisma.preset.findMany({
       where: { semillero_id: semilleroId },
@@ -53,8 +71,26 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await getUserSession(request);
+    if (!session) {
+      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+    }
+
     const { id } = await params;
     const semilleroId = parseInt(id);
+
+    // Verificar propiedad del semillero
+    const semillero = await prisma.semillero.findFirst({
+      where: {
+        id: semilleroId,
+        usuario_correo: session.correo as string
+      }
+    });
+
+    if (!semillero) {
+      return NextResponse.json({ error: 'Semillero no encontrado o no autorizado' }, { status: 404 });
+    }
+
     const body = await request.json();
     const { nombre, criaturas } = body;
 

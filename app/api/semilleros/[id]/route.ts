@@ -91,6 +91,7 @@ export async function GET(
           descripcion: ch.habilidad.descripcion
         })),
         tipo: sc.criatura.tipo,
+        tipo_ataque: sc.criatura.tipo_ataque,
         depredadores: sc.criatura.depredadores
       }))
     };
